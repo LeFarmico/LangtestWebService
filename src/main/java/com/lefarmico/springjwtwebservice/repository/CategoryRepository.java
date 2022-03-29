@@ -1,0 +1,15 @@
+package com.lefarmico.springjwtwebservice.repository;
+
+import com.lefarmico.springjwtwebservice.entity.Category;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
+
+public interface CategoryRepository extends JpaRepository<Category, Long> {
+    @Query(
+            nativeQuery = true,
+            value = "SELECT * FROM category WHERE languageId=?1"
+    )
+    public List<Category> findByLanguageId(Long languageId);
+}

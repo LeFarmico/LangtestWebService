@@ -1,28 +1,35 @@
 package com.lefarmico.springjwtwebservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
-@Table(name = "user")
-public class User {
+@Table(name = "quiz_word")
+public class QuizWord {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
 
     @Column
-    private String email;
+    private Long clientId;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String password;
+    @Column
+    private Boolean isAnswered;
+
+    @Column
+    private String originalWord;
+
+    @Column
+    private String correctTranslation;
+
+    @Column
+    private List<String> wrongTranslations;
 }

@@ -1,8 +1,6 @@
 package com.lefarmico.springjwtwebservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -12,17 +10,22 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
-@Table(name = "user")
-public class User {
+@Table(name = "word")
+public class Word {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
 
     @Column
-    private String email;
+    private String wordOriginal;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String password;
+    @Column
+    private String wordTranslation;
+
+    @Column
+    private Long categoryId;
+
+    @Column
+    private Long languageId;
 }
