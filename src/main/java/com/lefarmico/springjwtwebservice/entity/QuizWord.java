@@ -30,6 +30,6 @@ public class QuizWord {
     @Column
     private String correctTranslation;
 
-    @Column
+    @ElementCollection
     private List<String> wrongTranslations;
 }
