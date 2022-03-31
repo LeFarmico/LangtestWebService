@@ -1,8 +1,6 @@
 package com.lefarmico.springjwtwebservice.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -11,6 +9,9 @@ import javax.persistence.*;
 @Setter
 @ToString
 @Table(name = "client")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -18,7 +19,7 @@ public class Client {
     private Long id;
 
     @Column
-    private Long clientId;
+    private String clientId;
 
     @Column
     private Long categoryId;
