@@ -1,15 +1,17 @@
 package com.lefarmico.springjwtwebservice.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Entity
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+
+@Entity
 @Table(name = "category")
 public class Category {
     @Id
@@ -22,4 +24,8 @@ public class Category {
 
     @Column
     private Long languageId;
+
+    @Column
+    @Builder.Default
+    private Boolean immutable = true;
 }

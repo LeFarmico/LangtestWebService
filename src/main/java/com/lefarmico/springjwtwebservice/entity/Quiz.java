@@ -1,15 +1,17 @@
 package com.lefarmico.springjwtwebservice.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Entity
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+
+@Entity
 @Table(name = "quiz")
 public class Quiz {
     @Id
@@ -21,7 +23,7 @@ public class Quiz {
     private String status;
 
     @Column
-    private Long clientId;
+    private String clientId;
 
     @Column
     private Long currentSequenceNumber;
