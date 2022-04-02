@@ -75,7 +75,7 @@ public class JPAUserRepositoryTests {
 
     @DisplayName("JUnit test for update user operation")
     @Test
-    void givenUserObject_whenUpdateEmployee_thenReturnUserEmployee() {
+    void givenUserObject_whenUpdateUser_thenReturnUserUpdated() {
 
         userRepository.save(user);
         User user = userRepository.findById(this.user.getId()).get();

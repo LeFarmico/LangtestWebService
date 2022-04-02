@@ -1,17 +1,17 @@
 package com.lefarmico.springjwtwebservice.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Entity
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+
+@Entity
 @Table(name = "language")
 public class Language {
     @Id

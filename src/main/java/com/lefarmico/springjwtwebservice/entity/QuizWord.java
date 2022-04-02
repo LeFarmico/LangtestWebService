@@ -1,16 +1,18 @@
 package com.lefarmico.springjwtwebservice.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
-@Entity
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+
+@Entity
 @Table(name = "quiz_word")
 public class QuizWord {
     @Id
@@ -19,7 +21,7 @@ public class QuizWord {
     private Long id;
 
     @Column
-    private Long clientId;
+    private String clientId;
 
     @Column
     private Boolean isAnswered;

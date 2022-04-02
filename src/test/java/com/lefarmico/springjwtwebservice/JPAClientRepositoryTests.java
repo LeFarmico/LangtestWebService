@@ -84,7 +84,7 @@ public class JPAClientRepositoryTests {
 
     @DisplayName("JUnit test for update client operation")
     @Test
-    void givenClientObject_whenUpdateEmployee_thenReturnClientEmployee() {
+    void givenClientObject_whenUpdateClient_thenReturnClientUpdated() {
 
         clientRepository.save(client);
         Client client = clientRepository.findById(this.client.getId()).get();

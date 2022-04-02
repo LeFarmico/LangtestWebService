@@ -81,7 +81,7 @@ public class JPAWordRepositoryTests {
 
     @DisplayName("JUnit test for update word operation")
     @Test
-    void givenWordObject_whenUpdateEmployee_thenReturnWordEmployee() {
+    void givenWordObject_whenUpdateWord_thenReturnWordUpdated() {
 
         wordRepository.save(testWord);
         Word wordDb = wordRepository.findById(testWord.getId()).get();
