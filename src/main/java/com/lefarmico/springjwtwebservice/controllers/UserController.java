@@ -20,7 +20,6 @@ public class UserController {
 
     @GetMapping("/info")
     public User getUserDetails() {
-        System.out.println("XXX");
         String email = (String) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
