@@ -7,16 +7,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
-@DataJpaTest
+@SpringBootTest
 public class JPAWordRepositoryTests {
 
     @Autowired
@@ -74,9 +75,13 @@ public class JPAWordRepositoryTests {
     void givenWordObject_whenFindById_thenReturnWordObject() {
 
         wordRepository.save(testWord);
-        Word wordDb = wordRepository.findById(testWord.getId()).get();
-
-        assertThat(wordDb).isNotNull();
+        Optional<Word> optionalWord = wordRepository.findById(testWord.getId());
+        if (optionalWord.isPresent()) {
+            Word wordDb = optionalWord.get();
+            assertThat(wordDb).isNotNull();
+        } else {
+            fail("Word not found.");
+        }
     }
 
     @DisplayName("JUnit test for update word operation")
@@ -84,18 +89,23 @@ public class JPAWordRepositoryTests {
     void givenWordObject_whenUpdateWord_thenReturnWordUpdated() {
 
         wordRepository.save(testWord);
-        Word wordDb = wordRepository.findById(testWord.getId()).get();
-        wordDb.setWordOriginal("bbb");
-        wordDb.setWordTranslation("ббб");
-        wordDb.setLanguageId(999L);
-        wordDb.setCategoryId(999L);
+        Optional<Word> optionalWord = wordRepository.findById(testWord.getId());
+        if (optionalWord.isPresent()) {
+            Word wordDb = optionalWord.get();
+            wordDb.setWordOriginal("bbb");
+            wordDb.setWordTranslation("ббб");
+            wordDb.setLanguageId(999L);
+            wordDb.setCategoryId(999L);
 
-        Word updatedWordDb = wordRepository.save(wordDb);
+            Word updatedWordDb = wordRepository.save(wordDb);
 
-        assertThat(updatedWordDb.getWordOriginal()).isEqualTo("bbb");
-        assertThat(updatedWordDb.getWordTranslation()).isEqualTo("ббб");
-        assertThat(updatedWordDb.getLanguageId()).isEqualTo(999L);
-        assertThat(updatedWordDb.getCategoryId()).isEqualTo(999L);
+            assertThat(updatedWordDb.getWordOriginal()).isEqualTo("bbb");
+            assertThat(updatedWordDb.getWordTranslation()).isEqualTo("ббб");
+            assertThat(updatedWordDb.getLanguageId()).isEqualTo(999L);
+            assertThat(updatedWordDb.getCategoryId()).isEqualTo(999L);
+        } else {
+            fail("Word not found.");
+        }
     }
 
     @DisplayName("JUnit test for delete word operation")

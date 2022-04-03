@@ -7,16 +7,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
-@DataJpaTest
+@SpringBootTest
 public class JPAQuizRepositoryTests {
 
     @Autowired
@@ -71,9 +72,14 @@ public class JPAQuizRepositoryTests {
     void givenQuizObject_whenFindById_thenReturnQuizObject() {
 
         quizRepository.save(testQuiz);
-        Quiz quizDB = quizRepository.findById(testQuiz.getId()).get();
+        Optional<Quiz> optionalQuiz = quizRepository.findById(testQuiz.getId());
+        if (optionalQuiz.isPresent()) {
+            Quiz quizDB = optionalQuiz.get();
+            assertThat(quizDB).isNotNull();
+        } else {
+            fail("Quiz not found!");
+        }
 
-        assertThat(quizDB).isNotNull();
     }
 
     @DisplayName("JUnit test for update quiz operation")
@@ -81,16 +87,22 @@ public class JPAQuizRepositoryTests {
     void givenQuizObject_whenUpdateQuiz_thenReturnUpdatedQuiz() {
 
         quizRepository.save(testQuiz);
-        Quiz quizDB = quizRepository.findById(testQuiz.getId()).get();
-        quizDB.setClientId("133r4");
-        quizDB.setStatus("stopped");
-        quizDB.setCurrentSequenceNumber(10L);
+        Optional<Quiz> optionalQuiz = quizRepository.findById(testQuiz.getId());
+        if (optionalQuiz.isPresent()) {
+            Quiz quizDB = optionalQuiz.get();
+            quizDB.setClientId("133r4");
+            quizDB.setStatus("stopped");
+            quizDB.setCurrentSequenceNumber(10L);
 
-        Quiz updatedQuiz = quizRepository.save(quizDB);
+            Quiz updatedQuiz = quizRepository.save(quizDB);
 
-        assertThat(updatedQuiz.getClientId()).isEqualTo("133r4");
-        assertThat(updatedQuiz.getStatus()).isEqualTo("stopped");
-        assertThat(updatedQuiz.getCurrentSequenceNumber()).isEqualTo(10L);
+            assertThat(updatedQuiz.getClientId()).isEqualTo("133r4");
+            assertThat(updatedQuiz.getStatus()).isEqualTo("stopped");
+            assertThat(updatedQuiz.getCurrentSequenceNumber()).isEqualTo(10L);
+        } else {
+            fail("Quiz not found.");
+        }
+
     }
 
     @DisplayName("JUnit test for delete quiz operation")

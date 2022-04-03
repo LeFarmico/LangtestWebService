@@ -8,15 +8,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
-@DataJpaTest
+@SpringBootTest
 public class JPAClientRepositoryTests {
 
     @Autowired
@@ -77,9 +79,13 @@ public class JPAClientRepositoryTests {
     void givenClientObject_whenFindById_thenReturnClientObject() {
 
         clientRepository.save(client);
-        Client clientFromDB = clientRepository.findById(client.getId()).get();
-
-        assertThat(clientFromDB).isNotNull();
+        Optional<Client> optionalClient = clientRepository.findById(client.getId());
+        if (optionalClient.isPresent()) {
+            Client clientFromDB = optionalClient.get();
+            assertThat(clientFromDB).isNotNull();
+        } else {
+            fail("Client not found.");
+        }
     }
 
     @DisplayName("JUnit test for update client operation")
@@ -87,20 +93,26 @@ public class JPAClientRepositoryTests {
     void givenClientObject_whenUpdateClient_thenReturnClientUpdated() {
 
         clientRepository.save(client);
-        Client client = clientRepository.findById(this.client.getId()).get();
-        client.setClientId("ewpfjewopriw");
-        client.setCategoryId(45L);
-        client.setWordsInTest(85L);
-        client.setNextQuizTime(5494L);
-        client.setLanguageId(4895L);
+        Optional<Client> optionalClient = clientRepository.findById(client.getId());
+        if (optionalClient.isPresent()) {
+            Client client = optionalClient.get();
+            client.setClientId("ewpfjewopriw");
+            client.setCategoryId(45L);
+            client.setWordsInTest(85L);
+            client.setNextQuizTime(5494L);
+            client.setLanguageId(4895L);
 
-        Client updatedClientForDb = clientRepository.save(client);
+            Client updatedClientForDb = clientRepository.save(client);
 
-        assertThat(updatedClientForDb.getClientId()).isEqualTo("ewpfjewopriw");
-        assertThat(updatedClientForDb.getCategoryId()).isEqualTo(45L);
-        assertThat(updatedClientForDb.getWordsInTest()).isEqualTo(85L);
-        assertThat(updatedClientForDb.getNextQuizTime()).isEqualTo(5494L);
-        assertThat(updatedClientForDb.getLanguageId()).isEqualTo(4895L);
+            assertThat(updatedClientForDb.getClientId()).isEqualTo("ewpfjewopriw");
+            assertThat(updatedClientForDb.getCategoryId()).isEqualTo(45L);
+            assertThat(updatedClientForDb.getWordsInTest()).isEqualTo(85L);
+            assertThat(updatedClientForDb.getNextQuizTime()).isEqualTo(5494L);
+            assertThat(updatedClientForDb.getLanguageId()).isEqualTo(4895L);
+        } else {
+            fail("Client not found.");
+        }
+
     }
 
     @DisplayName("JUnit test for delete client operation")
