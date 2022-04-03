@@ -1,6 +1,5 @@
 package com.lefarmico.springjwtwebservice;
 
-import com.lefarmico.springjwtwebservice.entity.Category;
 import com.lefarmico.springjwtwebservice.entity.Language;
 import com.lefarmico.springjwtwebservice.repository.LanguageRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,16 +7,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
-@DataJpaTest
+@SpringBootTest
 public class JPALanguageRepositoryTests {
 
     @Autowired
@@ -66,9 +66,13 @@ public class JPALanguageRepositoryTests {
     void givenLanguageObject_whenFindById_thenReturnLanguageObject() {
 
         languageRepository.save(testLanguage);
-        Language languageDB = languageRepository.findById(testLanguage.getId()).get();
-
-        assertThat(languageDB).isNotNull();
+        Optional<Language> optionalLanguage = languageRepository.findById(testLanguage.getId());
+        if (optionalLanguage.isPresent()) {
+            Language languageDB = optionalLanguage.get();
+            assertThat(languageDB).isNotNull();
+        } else {
+            fail("Language not found.");
+        }
     }
 
     @DisplayName("JUnit test for update language operation")
@@ -76,12 +80,16 @@ public class JPALanguageRepositoryTests {
     void givenCategoryObject_whenUpdateCategory_thenReturnUpdatedCategory() {
 
         languageRepository.save(testLanguage);
-        Language categoryDB = languageRepository.findById(testLanguage.getId()).get();
-        categoryDB.setLanguageName("Французкий");
+        Optional<Language> optionalLanguage = languageRepository.findById(testLanguage.getId());
+        if (optionalLanguage.isPresent()) {
+            Language categoryDB = optionalLanguage.get();
+            categoryDB.setLanguageName("Французкий");
 
-        Language updatedLanguage = languageRepository.save(categoryDB);
-
-        assertThat(updatedLanguage.getLanguageName()).isEqualTo("Французкий");
+            Language updatedLanguage = languageRepository.save(categoryDB);
+            assertThat(updatedLanguage.getLanguageName()).isEqualTo("Французкий");
+        } else {
+            fail("Language not found");
+        }
     }
 
     @DisplayName("JUnit test for delete language operation")

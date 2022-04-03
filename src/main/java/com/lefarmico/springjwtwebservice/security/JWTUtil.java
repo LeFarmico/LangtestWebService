@@ -24,7 +24,7 @@ public class JWTUtil {
                 .withClaim("email", email)
                 .withIssuedAt(new Date())
                 .withIssuer("api/langtest/lefarmico")
-                .withExpiresAt(new Date(System.currentTimeMillis()))
+//                .withExpiresAt(new Date(System.currentTimeMillis()))
                 .sign(Algorithm.HMAC256(secret));
     }
 

@@ -15,11 +15,11 @@ import javax.persistence.*;
 @Table(name = "user")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column
+    @Column(unique = true)
     private String email;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
