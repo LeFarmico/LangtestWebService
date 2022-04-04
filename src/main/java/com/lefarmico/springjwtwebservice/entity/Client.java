@@ -18,7 +18,7 @@ public class Client {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column
+    @Column(name = "client_id", unique = true)
     private String clientId;
 
     @Column

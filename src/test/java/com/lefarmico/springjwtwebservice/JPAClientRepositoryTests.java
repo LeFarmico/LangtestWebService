@@ -7,7 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -113,6 +112,29 @@ public class JPAClientRepositoryTests {
             fail("Client not found.");
         }
 
+    }
+
+    @DisplayName("JUnit test for delete client by clientId operation")
+    @Test
+    void deleteGivenClientObject_byClientId() {
+        Client savedClient = clientRepository.save(client);
+        clientRepository.deleteClientByClientId(savedClient.getClientId());
+        Integer invalidClientIdResult = clientRepository.deleteClientByClientId(savedClient.getClientId());
+
+        Optional<Client> clientOptional = clientRepository.findById(client.getId());
+        assertThat(clientOptional).isEmpty();
+        assertThat(invalidClientIdResult).isEqualTo(0);
+    }
+
+    @DisplayName("JUnit test for get client by clientId operation")
+    @Test
+    void givenClient_whenFindByClientId_thenReturnClient() {
+        Client savedClient = clientRepository.save(client);
+        Optional<Client> clientDB = clientRepository.findClientByClientId(savedClient.getClientId());
+        Optional<Client> clientDBInvalid = clientRepository.findClientByClientId("XXX");
+
+        assertThat(clientDB.isPresent()).isEqualTo(true);
+        assertThat(clientDBInvalid.isPresent()).isEqualTo(false);
     }
 
     @DisplayName("JUnit test for delete client operation")
