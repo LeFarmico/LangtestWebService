@@ -4,10 +4,12 @@ import com.lefarmico.springjwtwebservice.entity.Client;
 import com.lefarmico.springjwtwebservice.repository.ClientRepository;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @NoArgsConstructor
+@Component
 public class ClientService {
 
     @Autowired

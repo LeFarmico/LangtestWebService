@@ -32,6 +32,9 @@ public class QuizWord {
     @Column
     private String correctTranslation;
 
+    @Column
+    private Long quizId;
+
     @ElementCollection
     private List<String> wrongTranslations;
 }
