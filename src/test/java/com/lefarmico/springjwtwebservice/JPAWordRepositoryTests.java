@@ -119,4 +119,22 @@ public class JPAWordRepositoryTests {
 
         assertThat(wordOptional).isEmpty();
     }
+
+    @DisplayName("JUnit test for get word translations except given parameter operation")
+    @Test
+    void givenWordList_whenExceptFilter_thenReturnStringList() {
+        wordRepository.save(testWord);
+        List<Word> wordsList = wordRepository.getWordsByCategoryId(testWord.getCategoryId());
+        List<String> translationList =
+                wordRepository.getWordsTranslationsExcept(testWord.getCategoryId(), testWord.getWordTranslation());
+        assertThat(translationList.size()).isEqualTo(wordsList.size()-1);
+    }
+
+    @DisplayName("JUnit test for get words by categoryId operation")
+    @Test
+    void givenWordList_getByCategoryId_thenReturnWordList() {
+        wordRepository.save(testWord);
+        List<Word> wordsListByCategory = wordRepository.getWordsByCategoryId(testWord.getCategoryId());
+        wordsListByCategory.forEach(word -> assertThat(word.getCategoryId()).isEqualTo(testWord.getCategoryId()));
+    }
 }

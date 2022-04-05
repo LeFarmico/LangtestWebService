@@ -36,6 +36,7 @@ public class JPAQuizWordRepositoryTests {
                 .originalWord("Dog")
                 .correctTranslation("Собака")
                 .isAnswered(false)
+                .quizId(1L)
                 .wrongTranslations(testWrongAnswers)
                 .build();
     }
@@ -51,6 +52,7 @@ public class JPAQuizWordRepositoryTests {
                 .originalWord("Orange")
                 .correctTranslation("Апельсин")
                 .isAnswered(true)
+                .quizId(1L)
                 .wrongTranslations(wrongAnswers)
                 .build();
         QuizWord savedQuizWord = quizWordRepository.save(quiz);
@@ -68,6 +70,7 @@ public class JPAQuizWordRepositoryTests {
                 .clientId("weoifwopefi")
                 .originalWord("Orange")
                 .correctTranslation("Апельсин")
+                .quizId(1L)
                 .isAnswered(true)
                 .wrongTranslations(wrongAnswers)
                 .build();
@@ -106,6 +109,7 @@ public class JPAQuizWordRepositoryTests {
             QuizWord quizWordDB = optionalQuizWord.get();
             quizWordDB.setClientId("133r4");
             quizWordDB.setOriginalWord("Pool");
+            quizWordDB.setQuizId(1L);
             quizWordDB.setCorrectTranslation("Бассейн");
             quizWordDB.setIsAnswered(true);
 
