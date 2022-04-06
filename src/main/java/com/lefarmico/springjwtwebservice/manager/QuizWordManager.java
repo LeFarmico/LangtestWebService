@@ -1,11 +1,11 @@
 package com.lefarmico.springjwtwebservice.manager;
 
-import com.lefarmico.springjwtwebservice.entity.Quiz;
+import com.lefarmico.springjwtwebservice.entity.QuizData;
 import com.lefarmico.springjwtwebservice.entity.Word;
 import com.lefarmico.springjwtwebservice.factory.QuizWordFactory;
 import com.lefarmico.springjwtwebservice.entity.Client;
 import com.lefarmico.springjwtwebservice.entity.QuizWord;
-import com.lefarmico.springjwtwebservice.repository.QuizRepository;
+import com.lefarmico.springjwtwebservice.repository.QuizDataRepository;
 import com.lefarmico.springjwtwebservice.repository.QuizWordRepository;
 import com.lefarmico.springjwtwebservice.repository.WordRepository;
 import com.lefarmico.springjwtwebservice.service.ClientService;
@@ -33,7 +33,7 @@ public class QuizWordManager {
     QuizWordRepository quizWordRepository;
 
     @Autowired
-    QuizRepository quizRepository;
+    QuizDataRepository quizDataRepository;
 
     @Autowired
     WordRepository wordRepository;
@@ -53,11 +53,11 @@ public class QuizWordManager {
         );
         if (clientDB.isPresent()) {
             // TODO do it by using service
-            quizRepository.save(
-                    Quiz.builder()
+            quizDataRepository.save(
+                    QuizData.builder()
                             .status("default")
                             .clientId(clientId)
-                            .currentSequenceNumber(0L)
+                            .currentWordNumber(0L)
                             .build()
             );
             List<Word> wordList = wordRepository.getWordsByCategoryId(clientDB.get().getCategoryId());

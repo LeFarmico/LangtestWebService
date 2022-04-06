@@ -15,7 +15,8 @@ public class ClientService {
     @Autowired
     ClientRepository clientRepository;
 
-    public Client addClient(Client client) {
+    public Client addClient(String clientId) {
+        Client client = Client.builder().clientId(clientId).build();
         return clientRepository.save(client);
     }
 
