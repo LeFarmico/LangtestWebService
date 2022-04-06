@@ -20,16 +20,4 @@ public class Client {
 
     @Column(name = "client_id", unique = true)
     private String clientId;
-
-    @Column
-    private Long categoryId;
-
-    @Column
-    private Long nextQuizTime;
-
-    @Column
-    private Long wordsInTest;
-
-    @Column
-    private Long languageId;
 }
