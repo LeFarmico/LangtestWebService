@@ -5,6 +5,8 @@ import com.lefarmico.springjwtwebservice.repository.QuizDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class QuizDataService {
 
@@ -23,6 +25,25 @@ public class QuizDataService {
                 .categoryId(categoryId)
                 .build();
         return quizDataRepository.save(quizData);
+    }
+
+    public QuizData updateQuizDataForClient(
+            String clientId, Short wordsInQuiz, Long nextQuizTime,
+            Long languageId, Long categoryId
+    ) {
+        QuizData quizData = QuizData.builder()
+                .clientId(clientId)
+                .wordsInQuiz(wordsInQuiz)
+                .nextQuizTime(nextQuizTime)
+                .languageId(languageId)
+                .categoryId(categoryId)
+                .build();
+
+        return quizDataRepository.save(quizData);
+    }
+
+    public Optional<QuizData> getQuizDataByClientId(String clientId) {
+        return quizDataRepository.findById(clientId);
     }
 
     public Boolean deleteQuizDataForClient(String clientId) {

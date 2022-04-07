@@ -45,26 +45,21 @@ public class QuizWordManager {
         Optional<Client> clientDB = Optional.of(
                 Client.builder()
                         .clientId(clientId)
-                        .languageId(1L)
-                        .categoryId(1L)
-                        .nextQuizTime(1000L)
-                        .wordsInTest(5L)
                         .build()
         );
         if (clientDB.isPresent()) {
             // TODO do it by using service
-            quizDataRepository.save(
+            QuizData clientsQuizData = quizDataRepository.save(
                     QuizData.builder()
                             .status("default")
                             .clientId(clientId)
-                            .currentWordNumber(0L)
                             .build()
             );
-            List<Word> wordList = wordRepository.getWordsByCategoryId(clientDB.get().getCategoryId());
+            List<Word> wordList = wordRepository.getWordsByCategoryId(clientsQuizData.getCategoryId());
             List<QuizWord> quizWordList = new ArrayList<>();
             wordList.forEach( word -> {
                 List<String> translationsList = wordRepository.getWordsTranslationsExcept(
-                        clientDB.get().getCategoryId(),
+                        clientsQuizData.getCategoryId(),
                         word.getWordTranslation()
                 );
                 QuizWord quizWord = quizWordFactory.createQuizWord(clientId, word, translationsList);
