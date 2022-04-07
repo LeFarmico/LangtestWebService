@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class JPAQuizWordRepositoryTests {
+public class JPAQuizWordRepositoryTestsData {
 
     @Autowired
     QuizWordRepository quizWordRepository;

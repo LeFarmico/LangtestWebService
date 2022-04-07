@@ -1,11 +1,11 @@
 package com.lefarmico.springjwtwebservice.manager;
 
-import com.lefarmico.springjwtwebservice.entity.Quiz;
+import com.lefarmico.springjwtwebservice.entity.QuizData;
 import com.lefarmico.springjwtwebservice.entity.Word;
 import com.lefarmico.springjwtwebservice.factory.QuizWordFactory;
 import com.lefarmico.springjwtwebservice.entity.Client;
 import com.lefarmico.springjwtwebservice.entity.QuizWord;
-import com.lefarmico.springjwtwebservice.repository.QuizRepository;
+import com.lefarmico.springjwtwebservice.repository.QuizDataRepository;
 import com.lefarmico.springjwtwebservice.repository.QuizWordRepository;
 import com.lefarmico.springjwtwebservice.repository.WordRepository;
 import com.lefarmico.springjwtwebservice.service.ClientService;
@@ -33,7 +33,7 @@ public class QuizWordManager {
     QuizWordRepository quizWordRepository;
 
     @Autowired
-    QuizRepository quizRepository;
+    QuizDataRepository quizDataRepository;
 
     @Autowired
     WordRepository wordRepository;
@@ -45,26 +45,21 @@ public class QuizWordManager {
         Optional<Client> clientDB = Optional.of(
                 Client.builder()
                         .clientId(clientId)
-                        .languageId(1L)
-                        .categoryId(1L)
-                        .nextQuizTime(1000L)
-                        .wordsInTest(5L)
                         .build()
         );
         if (clientDB.isPresent()) {
             // TODO do it by using service
-            quizRepository.save(
-                    Quiz.builder()
+            QuizData clientsQuizData = quizDataRepository.save(
+                    QuizData.builder()
                             .status("default")
                             .clientId(clientId)
-                            .currentSequenceNumber(0L)
                             .build()
             );
-            List<Word> wordList = wordRepository.getWordsByCategoryId(clientDB.get().getCategoryId());
+            List<Word> wordList = wordRepository.getWordsByCategoryId(clientsQuizData.getCategoryId());
             List<QuizWord> quizWordList = new ArrayList<>();
             wordList.forEach( word -> {
                 List<String> translationsList = wordRepository.getWordsTranslationsExcept(
-                        clientDB.get().getCategoryId(),
+                        clientsQuizData.getCategoryId(),
                         word.getWordTranslation()
                 );
                 QuizWord quizWord = quizWordFactory.createQuizWord(clientId, word, translationsList);
