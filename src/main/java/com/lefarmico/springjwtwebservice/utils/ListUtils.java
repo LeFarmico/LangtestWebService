@@ -16,4 +16,9 @@ public class ListUtils {
         }
         return  randomisedItemsList;
     }
+
+    public static <T> T getRandomElementFromList(List<T> list) {
+        Random random = new Random();
+        return list.get(random.nextInt(list.size()));
+    }
 }
