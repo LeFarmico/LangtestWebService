@@ -28,4 +28,5 @@ public class ClientService {
     public Optional<Client> getClientByClientId(String clientId) {
         return clientRepository.findClientByClientId(clientId);
     }
+
 }

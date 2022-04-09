@@ -43,4 +43,8 @@ public class QuizData {
     @Column(name = "category_id", nullable = false)
     @NonNull
     private Long categoryId;
+
+    public static enum Status {
+        DEFAULT, PAUSE, RUNNING, ERROR
+    }
 }
