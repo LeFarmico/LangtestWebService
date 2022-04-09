@@ -6,14 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping(path = "/api/quiz/data", produces = APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/quiz", produces = APPLICATION_JSON_VALUE)
 public class QuizDataController {
 
     @Autowired
@@ -26,8 +24,6 @@ public class QuizDataController {
             @RequestParam("next_quiz_time") Long nextQuizTime,
             @RequestParam("language_id") Long languageId,
             @RequestParam("category_id") Long categoryId
-//            @RequestParam(value = "status", required = false) String status,
-//            @RequestParam(value = "current_word_number", required = false) Long currentWordNumber
     ) {
         try {
             if (quizDataService.getQuizDataByClientId(clientId).isPresent()) {
@@ -61,7 +57,7 @@ public class QuizDataController {
         }
     }
 
-    @DeleteMapping(value = "/quizData/{client_id}")
+    @DeleteMapping(value = "/{client_id}/delete")
     public ResponseEntity<Object> deleteQuizDataByClientId(@PathVariable("client_id") String clientId) {
         try {
             Boolean deleteState = quizDataService.deleteQuizDataForClient(clientId);

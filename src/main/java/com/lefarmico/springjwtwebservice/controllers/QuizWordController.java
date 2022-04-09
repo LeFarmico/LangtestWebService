@@ -23,7 +23,9 @@ public class QuizWordController {
     QuizWordManager quizWordManager;
 
     @PostMapping(value = "/{client_id}/createQuizWords", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<QuizWord>> createQuizForClient(@PathVariable("client_id") String clientId) {
+    public ResponseEntity<List<QuizWord>> createQuizForClient(
+            @PathVariable("client_id") String clientId
+    ) {
         try {
             List<QuizWord> quizWordList = quizWordManager.createQuizForClient(clientId);
             return ResponseEntity.of(Optional.of(quizWordList));
@@ -33,7 +35,7 @@ public class QuizWordController {
         }
     }
 
-    @PutMapping(value = "/{client_id}/{quiz_word_id}")
+    @PutMapping(value = "/{client_id}/quiz_word/{quiz_word_id}")
     public ResponseEntity<QuizWord> setAnswerForQuizWord(
             @PathVariable("client_id") String clientId,
             @PathVariable("quiz_word_id") Long quizWordId,
@@ -46,6 +48,50 @@ public class QuizWordController {
                 return ResponseEntity.of(updatedQuizWordOptional);
             } else {
                 return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    @PutMapping(value = "/{client_id}/resetQuiz")
+    public ResponseEntity<Boolean> resetQuizWords(
+            @PathVariable("client_id") String clientId
+    ) {
+        try {
+            List<QuizWord> resetedQuizWordList = quizWordManager.resetQuizWordsForClient(clientId);
+            if (!resetedQuizWordList.isEmpty()) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.noContent().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping(value = "/{client_id}/quiz_word/next")
+    public ResponseEntity<QuizWord> getNextQuizWord(
+            @PathVariable("client_id") String clientId
+    ) {
+        try {
+            Optional<QuizWord> quizWordOptional = quizWordManager.getNextNotAnsweredQuizWord(clientId);
+            return quizWordOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @DeleteMapping(value = "/{client_id}/quiz_word/delete")
+    public ResponseEntity<Object> deleteQuizWord(
+            @PathVariable("client_id") String clientId
+    ) {
+        try {
+            Boolean isDeleted = quizWordManager.deleteQuizWordsByClientId(clientId);
+            if (isDeleted) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.noContent().build();
             }
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
