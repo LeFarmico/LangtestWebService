@@ -1,11 +1,11 @@
-package com.lefarmico.springjwtwebservice.manager;
+package com.lefarmico.springjwtwebservice.service;
 
 import com.lefarmico.springjwtwebservice.entity.QuizWord;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface IQuizWordManager {
+public interface IQuizWordService {
 
     List<QuizWord> createQuizForClient(String clientId);
 
@@ -13,11 +13,13 @@ public interface IQuizWordManager {
 
     Optional<QuizWord> getNextNotAnsweredQuizWord(String clientId);
 
+    List<QuizWord> getQuizWordsByClientId(String clientId);
+
     Optional<QuizWord> setAnswerForQuizWord(
             String clientId,
             Long quizWordId,
             Boolean answer
     );
 
-    List<QuizWord> resetQuizWordsForClient(String clientId);
+    Boolean resetQuizWordsForClient(String clientId);
 }

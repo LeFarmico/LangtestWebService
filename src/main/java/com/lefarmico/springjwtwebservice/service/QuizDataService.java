@@ -2,6 +2,7 @@ package com.lefarmico.springjwtwebservice.service;
 
 import com.lefarmico.springjwtwebservice.entity.QuizData;
 import com.lefarmico.springjwtwebservice.repository.QuizDataRepository;
+import com.lefarmico.springjwtwebservice.repository.QuizWordRepository;
 import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,9 @@ public class QuizDataService {
 
     @Autowired
     QuizDataRepository quizDataRepository;
+
+    @Autowired
+    QuizWordRepository quizWordRepository;
 
     public QuizData createQuizDataForClient(
             String clientId, Short wordsInQuiz, Long nextQuizTime,
@@ -52,6 +56,11 @@ public class QuizDataService {
                     .build();
 
             QuizData updatedQuizDataDB = quizDataRepository.save(quizDataForUpdate);
+
+            // TODO: зупустить в отдельном потоке?
+            if (languageId != null || categoryId != null) {
+                quizWordRepository.deleteQuizWordsByClientId(clientId);
+            }
             return Optional.of(updatedQuizDataDB);
 
         } else {

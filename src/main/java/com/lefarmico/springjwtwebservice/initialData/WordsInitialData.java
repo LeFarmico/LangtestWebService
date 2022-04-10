@@ -1,8 +1,6 @@
-package com.lefarmico.springjwtwebservice.data;
+package com.lefarmico.springjwtwebservice.initialData;
 
-import com.lefarmico.springjwtwebservice.entity.QuizWord;
 import com.lefarmico.springjwtwebservice.entity.Word;
-import com.lefarmico.springjwtwebservice.repository.QuizWordRepository;
 import com.lefarmico.springjwtwebservice.repository.WordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

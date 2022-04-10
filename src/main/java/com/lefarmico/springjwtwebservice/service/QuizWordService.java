@@ -1,13 +1,12 @@
-package com.lefarmico.springjwtwebservice.manager;
+package com.lefarmico.springjwtwebservice.service;
 
 import com.lefarmico.springjwtwebservice.entity.QuizData;
 import com.lefarmico.springjwtwebservice.entity.Word;
 import com.lefarmico.springjwtwebservice.factory.QuizWordFactory;
 import com.lefarmico.springjwtwebservice.entity.QuizWord;
+import com.lefarmico.springjwtwebservice.repository.QuizDataRepository;
 import com.lefarmico.springjwtwebservice.repository.QuizWordRepository;
 import com.lefarmico.springjwtwebservice.repository.WordRepository;
-import com.lefarmico.springjwtwebservice.service.ClientService;
-import com.lefarmico.springjwtwebservice.service.QuizDataService;
 import com.lefarmico.springjwtwebservice.utils.ListUtils;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
@@ -19,28 +18,26 @@ import java.util.*;
 
 @NoArgsConstructor
 @Component
-public class QuizWordManager implements IQuizWordManager {
+public class QuizWordService implements IQuizWordService {
 
-    private final Logger log = LoggerFactory.getLogger(QuizWordManager.class);
+    private final Logger log = LoggerFactory.getLogger(QuizWordService.class);
 
     @Autowired
     QuizWordFactory quizWordFactory;
 
     @Autowired
-    ClientService clientService;
-
-    @Autowired
     QuizWordRepository quizWordRepository;
 
     @Autowired
-    QuizDataService quizDataService;
+    QuizDataRepository quizDataRepository;
 
     @Autowired
     WordRepository wordRepository;
 
     @Override
     public List<QuizWord> createQuizForClient(String clientId) {
-        Optional<QuizData> optionalQuizData = quizDataService.getQuizDataByClientId(clientId);
+        quizWordRepository.deleteQuizWordsByClientId(clientId);
+        Optional<QuizData> optionalQuizData = quizDataRepository.findById(clientId);
         if (optionalQuizData.isPresent()) {
             QuizData quizData = optionalQuizData.get();
             List<Word> wordList = wordRepository.getWordsByCategoryId(quizData.getCategoryId());
@@ -77,6 +74,11 @@ public class QuizWordManager implements IQuizWordManager {
     }
 
     @Override
+    public List<QuizWord> getQuizWordsByClientId(String clientId) {
+        return quizWordRepository.getQuizWordsByClientId(clientId);
+    }
+
+    @Override
     public Optional<QuizWord> setAnswerForQuizWord(String clientId, Long quizWordId, Boolean answer) {
         Optional<QuizWord> quizWordDB = quizWordRepository.getQuizWordByQuizWordIdAndClientId(clientId, quizWordId);
         if (quizWordDB.isPresent()) {
@@ -89,7 +91,9 @@ public class QuizWordManager implements IQuizWordManager {
     }
 
     @Override
-    public List<QuizWord> resetQuizWordsForClient(String clientId) {
-        return null;
+    public Boolean resetQuizWordsForClient(String clientId) {
+        Integer numberOfChangerRows = quizWordRepository.updateIsAnsweredForClientId(clientId);
+        // TODO: Add check for existed quiz words
+        return numberOfChangerRows > 0;
     }
 }
