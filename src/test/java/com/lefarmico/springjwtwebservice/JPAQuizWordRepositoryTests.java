@@ -12,6 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -140,5 +141,67 @@ public class JPAQuizWordRepositoryTests {
         Optional<QuizWord> quizWordOptional = quizWordRepository.findById(testQuizWord.getId());
 
         assertThat(quizWordOptional).isEmpty();
+    }
+
+    @DisplayName("JUnit test for get QuizWord list by clientId")
+    @Test
+    void givenQuizWordObject_whenGetByClientId_thenReturnQuizWordList() {
+
+        List<String> wrongAnswers= new ArrayList<>();
+        wrongAnswers.add("Яблоко");
+        wrongAnswers.add("Груша");
+        QuizWord quiz = QuizWord.builder()
+                .clientId("weoifwoe")
+                .originalWord("Pineapple")
+                .correctTranslation("Ананас")
+                .quizId(1L)
+                .isAnswered(true)
+                .wrongTranslations(wrongAnswers)
+                .build();
+
+        quizWordRepository.save(testQuizWord);
+        quizWordRepository.save(quiz);
+
+        List<QuizWord> quizWordList = quizWordRepository.getQuizWordsByClientId("weoifwoe");
+        assertThat(quizWordList.stream().allMatch(quizWord ->
+                Objects.equals(quizWord.getClientId(), "weoifwoe")
+        )).isEqualTo(true);
+    }
+
+    @DisplayName("JUnit test for get QuizWord by clientId and quizWordId")
+    @Test
+    void givenQuizWordObject_whenGetByClientIdAndQuizWordId_thenReturnQuizWord() {
+
+        QuizWord quizWordDB = quizWordRepository.save(testQuizWord);
+
+        Optional<QuizWord> quizWordOptional = quizWordRepository.getQuizWordByQuizWordIdAndClientId(
+                quizWordDB.getClientId(), quizWordDB.getId()
+        );
+
+        assertThat(quizWordOptional.isPresent()).isEqualTo(true);
+    }
+
+    @Test
+    void givenQuizWordObject_whenDeleteByClientId_thenRemoveQuizWord() {
+        List<String> wrongAnswers= new ArrayList<>();
+        wrongAnswers.add("Яблоко");
+        wrongAnswers.add("Груша");
+        QuizWord quiz = QuizWord.builder()
+                .clientId("weoifwoe")
+                .originalWord("Pineapple")
+                .correctTranslation("Ананас")
+                .quizId(1L)
+                .isAnswered(true)
+                .wrongTranslations(wrongAnswers)
+                .build();
+
+        quizWordRepository.save(testQuizWord);
+        quizWordRepository.save(quiz);
+
+        Integer isDeleted = quizWordRepository.deleteQuizWordsByClientId("weoifwoe");
+        Integer isDeletedAgain = quizWordRepository.deleteQuizWordsByClientId("weoifwoe");
+
+        assertThat(isDeleted).isEqualTo(2);
+        assertThat(isDeletedAgain).isEqualTo(0);
     }
 }

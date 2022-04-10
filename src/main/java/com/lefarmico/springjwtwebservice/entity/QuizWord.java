@@ -20,19 +20,19 @@ public class QuizWord {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column
+    @Column(name = "client_id")
     private String clientId;
 
-    @Column
+    @Column(name = "is_answered")
     private Boolean isAnswered;
 
-    @Column
+    @Column(name = "original_word")
     private String originalWord;
 
-    @Column
+    @Column(name = "correct_translation")
     private String correctTranslation;
 
-    @Column
+    @Column(name = "quiz_id")
     private Long quizId;
 
     @ElementCollection

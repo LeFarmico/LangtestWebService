@@ -20,4 +20,7 @@ public class Client {
 
     @Column(name = "client_id", unique = true)
     private String clientId;
+
+    @Column(name = "chat_id", unique = true)
+    private Long chatId;
 }

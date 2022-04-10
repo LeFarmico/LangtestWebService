@@ -29,10 +29,6 @@ public class JPAClientRepositoryTests {
     void setUp() {
         client = Client.builder()
                 .clientId("erljgptrnpioevn")
-                .categoryId(1L)
-                .languageId(2L)
-                .nextQuizTime(134234L)
-                .wordsInTest(5L)
                 .build();
     }
 
@@ -41,10 +37,6 @@ public class JPAClientRepositoryTests {
     void givenClientObject_whenSave_thenReturn_SavedClient() {
         client = Client.builder()
                 .clientId("WERGWEPRGPE")
-                .categoryId(2L)
-                .languageId(3L)
-                .nextQuizTime(8965844L)
-                .wordsInTest(54L)
                 .build();
         Client savedClient = clientRepository.save(client);
         assertThat(savedClient).isNotNull();
@@ -56,10 +48,6 @@ public class JPAClientRepositoryTests {
     void givenClientList_whenFindAll_thenClientList() {
         Client client = Client.builder()
                 .clientId("WERGWEPRGPE")
-                .categoryId(2L)
-                .languageId(3L)
-                .nextQuizTime(8965844L)
-                .wordsInTest(54L)
                 .build();
 
         List<Client> wordsList = clientRepository.findAll();
@@ -96,18 +84,10 @@ public class JPAClientRepositoryTests {
         if (optionalClient.isPresent()) {
             Client client = optionalClient.get();
             client.setClientId("ewpfjewopriw");
-            client.setCategoryId(45L);
-            client.setWordsInTest(85L);
-            client.setNextQuizTime(5494L);
-            client.setLanguageId(4895L);
 
             Client updatedClientForDb = clientRepository.save(client);
 
             assertThat(updatedClientForDb.getClientId()).isEqualTo("ewpfjewopriw");
-            assertThat(updatedClientForDb.getCategoryId()).isEqualTo(45L);
-            assertThat(updatedClientForDb.getWordsInTest()).isEqualTo(85L);
-            assertThat(updatedClientForDb.getNextQuizTime()).isEqualTo(5494L);
-            assertThat(updatedClientForDb.getLanguageId()).isEqualTo(4895L);
         } else {
             fail("Client not found.");
         }
