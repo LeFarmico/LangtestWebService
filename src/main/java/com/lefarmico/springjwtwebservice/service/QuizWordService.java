@@ -2,6 +2,7 @@ package com.lefarmico.springjwtwebservice.service;
 
 import com.lefarmico.springjwtwebservice.entity.QuizData;
 import com.lefarmico.springjwtwebservice.entity.Word;
+import com.lefarmico.springjwtwebservice.exception.ClientNotFoundException;
 import com.lefarmico.springjwtwebservice.factory.QuizWordFactory;
 import com.lefarmico.springjwtwebservice.entity.QuizWord;
 import com.lefarmico.springjwtwebservice.repository.QuizDataRepository;
@@ -28,16 +29,19 @@ public class QuizWordService implements IQuizWordService {
     @Autowired
     QuizWordRepository quizWordRepository;
 
+//    @Autowired
+//    QuizDataRepository quizDataRepository;
+
     @Autowired
-    QuizDataRepository quizDataRepository;
+    QuizDataService quizDataService;
 
     @Autowired
     WordRepository wordRepository;
 
     @Override
-    public List<QuizWord> createQuizForClient(String clientId) {
+    public List<QuizWord> createQuizForClient(String clientId) throws ClientNotFoundException {
         quizWordRepository.deleteQuizWordsByClientId(clientId);
-        Optional<QuizData> optionalQuizData = quizDataRepository.findById(clientId);
+        Optional<QuizData> optionalQuizData = quizDataService.getQuizDataByClientId(clientId);
         if (optionalQuizData.isPresent()) {
             QuizData quizData = optionalQuizData.get();
             List<Word> wordList = wordRepository.getWordsByCategoryId(quizData.getCategoryId());
@@ -52,8 +56,7 @@ public class QuizWordService implements IQuizWordService {
             });
             return quizWordRepository.saveAll(quizWordList);
         } else {
-            log.warn("QuizData by id: " + clientId + " is not found!");
-            return Collections.emptyList();
+            throw new ClientNotFoundException("QuizData by id: " + clientId + " is not found!");
         }
     }
 
@@ -63,7 +66,8 @@ public class QuizWordService implements IQuizWordService {
     }
 
     @Override
-    public Optional<QuizWord> getNextNotAnsweredQuizWord(String clientId) {
+    public Optional<QuizWord> getNextNotAnsweredQuizWord(String clientId) throws ClientNotFoundException {
+        checkForClientQuizData(clientId);
         List<QuizWord> quizWordListDB = quizWordRepository.getQuizWordsByClientId(clientId);
         if (!quizWordListDB.isEmpty()) {
             QuizWord randomQuizWord = ListUtils.getRandomElementFromList(quizWordListDB);
@@ -74,26 +78,45 @@ public class QuizWordService implements IQuizWordService {
     }
 
     @Override
-    public List<QuizWord> getQuizWordsByClientId(String clientId) {
+    public List<QuizWord> getQuizWordsByClientId(String clientId) throws ClientNotFoundException {
+        checkForClientQuizData(clientId);
         return quizWordRepository.getQuizWordsByClientId(clientId);
     }
 
     @Override
-    public Optional<QuizWord> setAnswerForQuizWord(String clientId, Long quizWordId, Boolean answer) {
-        Optional<QuizWord> quizWordDB = quizWordRepository.getQuizWordByQuizWordIdAndClientId(clientId, quizWordId);
-        if (quizWordDB.isPresent()) {
-            QuizWord quizWord = quizWordDB.get();
-            quizWord.setIsAnswered(answer);
-            return Optional.of(quizWordRepository.save(quizWord));
-        } else {
-            return Optional.empty();
+    public Optional<Integer> setAnswerForQuizWord(String clientId, Long quizWordId, Boolean answer) {
+        try {
+            Optional<QuizData> quizDataDBOptional = quizDataService.getQuizDataByClientId(clientId);
+            if (quizDataDBOptional.isPresent()) {
+                QuizData quizData = quizDataDBOptional.get();
+                Optional<QuizWord> quizWordDB = quizWordRepository.getQuizWordByQuizWordIdAndClientId(clientId, quizWordId);
+
+                if (quizWordDB.isPresent()) {
+                    QuizWord quizWord = quizWordDB.get();
+                    quizWord.setIsAnswered(answer);
+
+                    if(qu)
+                    return Optional.of(quizDataService..save(quizWord));
+                } else {
+                    return Optional.empty();
+                }
+            }
         }
+
     }
 
     @Override
-    public Boolean resetQuizWordsForClient(String clientId) {
+    public Boolean resetQuizWordsForClient(String clientId) throws ClientNotFoundException {
+        checkForClientQuizData(clientId);
         Integer numberOfChangerRows = quizWordRepository.updateIsAnsweredForClientId(clientId);
         // TODO: Add check for existed quiz words
         return numberOfChangerRows > 0;
+    }
+
+    private void checkForClientQuizData(String clientId) throws ClientNotFoundException {
+        Optional<QuizData> quizDataDBOptional = quizDataService.getQuizDataByClientId(clientId);
+        if (quizDataDBOptional.isEmpty()) {
+            throw new ClientNotFoundException("QuizData for clientId: " + clientId + " is not found.");
+        }
     }
 }

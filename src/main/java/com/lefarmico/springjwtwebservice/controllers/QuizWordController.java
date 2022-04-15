@@ -1,6 +1,7 @@
 package com.lefarmico.springjwtwebservice.controllers;
 
 import com.lefarmico.springjwtwebservice.entity.QuizWord;
+import com.lefarmico.springjwtwebservice.exception.ClientNotFoundException;
 import com.lefarmico.springjwtwebservice.service.QuizWordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,9 +35,11 @@ public class QuizWordController {
                 return ResponseEntity.noContent().build();
             }
 
-        } catch (Exception e) {
+        } catch (ClientNotFoundException e) {
             log.error("Error in createQuizForClient function", e);
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -55,7 +58,7 @@ public class QuizWordController {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.internalServerError().build();
         }
     }
     
@@ -70,8 +73,10 @@ public class QuizWordController {
             } else {
                 return ResponseEntity.noContent().build();
             }
+        } catch (ClientNotFoundException e) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -82,8 +87,10 @@ public class QuizWordController {
         try {
             Optional<QuizWord> quizWordOptional = quizWordService.getNextNotAnsweredQuizWord(clientId);
             return quizWordOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
+        } catch (ClientNotFoundException e) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -98,8 +105,8 @@ public class QuizWordController {
             } else {
                 return ResponseEntity.noContent().build();
             }
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+        } catch (ClientNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -112,10 +119,10 @@ public class QuizWordController {
             if (isDeleted) {
                 return ResponseEntity.ok().build();
             } else {
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 }
