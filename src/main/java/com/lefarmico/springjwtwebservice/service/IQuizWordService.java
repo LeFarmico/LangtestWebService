@@ -27,7 +27,7 @@ public interface IQuizWordService {
             String clientId,
             Long quizWordId,
             Boolean answer
-    );
+    ) throws ClientNotFoundException;
 
     Boolean resetQuizWordsForClient(String clientId) throws ClientNotFoundException;
 }

@@ -84,25 +84,24 @@ public class QuizWordService implements IQuizWordService {
     }
 
     @Override
-    public Optional<Integer> setAnswerForQuizWord(String clientId, Long quizWordId, Boolean answer) {
-        try {
-            Optional<QuizData> quizDataDBOptional = quizDataService.getQuizDataByClientId(clientId);
-            if (quizDataDBOptional.isPresent()) {
-                QuizData quizData = quizDataDBOptional.get();
-                Optional<QuizWord> quizWordDB = quizWordRepository.getQuizWordByQuizWordIdAndClientId(clientId, quizWordId);
+    public Optional<Integer> setAnswerForQuizWord(String clientId, Long quizWordId, Boolean answer) throws ClientNotFoundException {
+        Optional<QuizData> quizDataDBOptional = quizDataService.getQuizDataByClientId(clientId);
+        if (quizDataDBOptional.isPresent()) {
+            QuizData quizData = quizDataDBOptional.get();
+            Optional<QuizWord> quizWordDB = quizWordRepository.getQuizWordByQuizWordIdAndClientId(clientId, quizWordId);
 
-                if (quizWordDB.isPresent()) {
-                    QuizWord quizWord = quizWordDB.get();
-                    quizWord.setIsAnswered(answer);
-
-                    if(qu)
-                    return Optional.of(quizDataService..save(quizWord));
-                } else {
-                    return Optional.empty();
-                }
+            if (quizWordDB.isPresent()) {
+                QuizWord quizWord = quizWordDB.get();
+                quizWord.setIsAnswered(answer);
+                QuizWord updatedQuizWord = quizWordRepository.save(quizWord);
+                // TODO need to return time of the next Quiz
+                return Optional.of(1);
+            } else {
+                return Optional.empty();
             }
+        } else {
+            throw new ClientNotFoundException("QuizData by id: " + clientId + " is not found!");
         }
-
     }
 
     @Override

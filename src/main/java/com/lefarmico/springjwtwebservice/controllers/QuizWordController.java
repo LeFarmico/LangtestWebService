@@ -44,19 +44,21 @@ public class QuizWordController {
     }
 
     @PutMapping(value = "/{client_id}/quiz_word/{quiz_word_id}")
-    public ResponseEntity<QuizWord> setAnswerForQuizWord(
+    public ResponseEntity<Integer> setAnswerForQuizWord(
             @PathVariable("client_id") String clientId,
             @PathVariable("quiz_word_id") Long quizWordId,
             @RequestParam("answer") Boolean answer
     ) {
         try {
-            Optional<QuizWord> updatedQuizWordOptional =
+            Optional<Integer> updatedQuizWordOptional =
                     quizWordService.setAnswerForQuizWord(clientId, quizWordId, answer);
             if (updatedQuizWordOptional.isPresent()) {
                 return ResponseEntity.of(updatedQuizWordOptional);
             } else {
                 return ResponseEntity.notFound().build();
             }
+        } catch (ClientNotFoundException e) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
