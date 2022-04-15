@@ -17,10 +17,4 @@ public class ClientController {
 
     @Autowired
     private ClientRepository clientRepository;
-
-//    @GetMapping("/add")
-//    @PostMapping(consumes = APPLICATION_JSON_VALUE)
-//    public ResponseEntity<Client> addUser(@RequestBody Client client) {
-////        clientRepository.save(client);
-//    }
 }

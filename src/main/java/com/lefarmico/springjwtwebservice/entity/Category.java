@@ -15,14 +15,14 @@ import javax.persistence.*;
 @Table(name = "category")
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column
+    @Column(name = "category_name")
     private String categoryName;
 
-    @Column
+    @Column(name = "language_id")
     private Long languageId;
 
     @Column

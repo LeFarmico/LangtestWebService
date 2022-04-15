@@ -1,6 +1,7 @@
 package com.lefarmico.springjwtwebservice.service;
 
 import com.lefarmico.springjwtwebservice.entity.QuizData;
+import com.lefarmico.springjwtwebservice.exception.ClientNotFoundException;
 import com.lefarmico.springjwtwebservice.repository.QuizDataRepository;
 import com.lefarmico.springjwtwebservice.repository.QuizWordRepository;
 import com.sun.istack.NotNull;
@@ -33,10 +34,10 @@ public class QuizDataService {
         return quizDataRepository.save(quizData);
     }
 
-    public Optional<QuizData> updateAndResetQuizDataForClient(
+    public QuizData updateAndResetQuizDataForClient(
             String clientId, Short wordsInQuiz, Long nextQuizTime,
             Long languageId, Long categoryId
-    ) {
+    ) throws ClientNotFoundException {
         Optional<QuizData> optionalQuizDataDB = quizDataRepository.findById(clientId);
         if (optionalQuizDataDB.isPresent()) {
             QuizData quizDataDB = optionalQuizDataDB.get();
@@ -61,10 +62,10 @@ public class QuizDataService {
             if (languageId != null || categoryId != null) {
                 quizWordRepository.deleteQuizWordsByClientId(clientId);
             }
-            return Optional.of(updatedQuizDataDB);
+            return updatedQuizDataDB;
 
         } else {
-            return Optional.empty();
+            throw new ClientNotFoundException("QuizData for clientId " + clientId + " is not found");
         }
     }
 
@@ -75,6 +76,15 @@ public class QuizDataService {
     public Boolean deleteQuizDataForClient(String clientId) {
         int deletedId = quizDataRepository.deleteQuizDataByClientId(clientId);
         return deletedId > 0;
+    }
+
+    public QuizData updateQuizData(QuizData quizData) throws ClientNotFoundException {
+        Optional<QuizData> quizDataOptional = quizDataRepository.findById(quizData.getClientId());
+        if (quizDataOptional.isPresent()) {
+            return quizDataRepository.save(quizData);
+        } else {
+            throw new ClientNotFoundException("QuizData for clientId " + quizData.getClientId() + " is not found");
+        }
     }
 
     private <T> T getOrElse(T nullableObject, @NotNull T notNullableObject) {

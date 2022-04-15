@@ -15,10 +15,10 @@ import javax.persistence.*;
 @Table(name = "language")
 public class Language {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column
+    @Column(name = "language_name")
     private String languageName;
 }

@@ -1,6 +1,7 @@
 package com.lefarmico.springjwtwebservice.controllers;
 
 import com.lefarmico.springjwtwebservice.entity.QuizWord;
+import com.lefarmico.springjwtwebservice.exception.ClientNotFoundException;
 import com.lefarmico.springjwtwebservice.service.QuizWordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,28 +35,32 @@ public class QuizWordController {
                 return ResponseEntity.noContent().build();
             }
 
-        } catch (Exception e) {
+        } catch (ClientNotFoundException e) {
             log.error("Error in createQuizForClient function", e);
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 
     @PutMapping(value = "/{client_id}/quiz_word/{quiz_word_id}")
-    public ResponseEntity<QuizWord> setAnswerForQuizWord(
+    public ResponseEntity<Integer> setAnswerForQuizWord(
             @PathVariable("client_id") String clientId,
             @PathVariable("quiz_word_id") Long quizWordId,
             @RequestParam("answer") Boolean answer
     ) {
         try {
-            Optional<QuizWord> updatedQuizWordOptional =
+            Optional<Integer> updatedQuizWordOptional =
                     quizWordService.setAnswerForQuizWord(clientId, quizWordId, answer);
             if (updatedQuizWordOptional.isPresent()) {
                 return ResponseEntity.of(updatedQuizWordOptional);
             } else {
                 return ResponseEntity.notFound().build();
             }
+        } catch (ClientNotFoundException e) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.internalServerError().build();
         }
     }
     
@@ -70,8 +75,10 @@ public class QuizWordController {
             } else {
                 return ResponseEntity.noContent().build();
             }
+        } catch (ClientNotFoundException e) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -82,8 +89,10 @@ public class QuizWordController {
         try {
             Optional<QuizWord> quizWordOptional = quizWordService.getNextNotAnsweredQuizWord(clientId);
             return quizWordOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
+        } catch (ClientNotFoundException e) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -98,8 +107,8 @@ public class QuizWordController {
             } else {
                 return ResponseEntity.noContent().build();
             }
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+        } catch (ClientNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -112,10 +121,10 @@ public class QuizWordController {
             if (isDeleted) {
                 return ResponseEntity.ok().build();
             } else {
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

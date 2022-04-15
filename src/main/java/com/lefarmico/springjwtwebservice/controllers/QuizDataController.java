@@ -1,6 +1,7 @@
 package com.lefarmico.springjwtwebservice.controllers;
 
 import com.lefarmico.springjwtwebservice.entity.QuizData;
+import com.lefarmico.springjwtwebservice.exception.ClientNotFoundException;
 import com.lefarmico.springjwtwebservice.service.QuizDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,7 @@ public class QuizDataController {
                     );
             return ResponseEntity.of(Optional.of(quizDataDB));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -53,7 +54,7 @@ public class QuizDataController {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -67,7 +68,7 @@ public class QuizDataController {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -80,11 +81,13 @@ public class QuizDataController {
             @RequestParam(value = "category_id", required = false) Long categoryId
     ) {
         try {
-            Optional<QuizData> updatedQuizData = quizDataService.updateAndResetQuizDataForClient(
+            QuizData updatedQuizData = quizDataService.updateAndResetQuizDataForClient(
                     clientId, wordsInQuiz, nextQuizTime, languageId, categoryId);
-            return updatedQuizData.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            return ResponseEntity.ok(updatedQuizData);
+        } catch (ClientNotFoundException e) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.lefarmico.springjwtwebservice.security;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +14,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+import static com.lefarmico.springjwtwebservice.message.HttpRequestResource.Header.auth;
+import static com.lefarmico.springjwtwebservice.message.HttpRequestResource.Header.bearerPref;
+import static com.lefarmico.springjwtwebservice.message.RequestMessage.blankJWT;
+import static com.lefarmico.springjwtwebservice.message.RequestMessage.invalidJWTMsg;
 
 @Component
 public class JWTFilter extends OncePerRequestFilter {
@@ -29,12 +35,12 @@ public class JWTFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-            String authHeader = request.getHeader("Authorization");
+            String authHeader = request.getHeader(auth);
 
-            if (authHeader != null && !authHeader.isBlank() && authHeader.startsWith("Bearer ")) {
+            if (authHeader != null && !authHeader.isBlank() && authHeader.startsWith(bearerPref)) {
                 String jwt = authHeader.substring(7);
                 if (jwt.isBlank()) {
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, blankJWT);
                 } else {
                     try {
                         String email = jwtUtil.validateAndTokenAndRetrieveSubject(jwt);
@@ -48,7 +54,7 @@ public class JWTFilter extends OncePerRequestFilter {
                             SecurityContextHolder.getContext().setAuthentication(authToken);
                         }
                     } catch (JWTVerificationException e) {
-                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token");
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, invalidJWTMsg);
                     }
                 }
             }
