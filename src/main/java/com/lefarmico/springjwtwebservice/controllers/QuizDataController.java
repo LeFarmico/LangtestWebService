@@ -1,7 +1,7 @@
 package com.lefarmico.springjwtwebservice.controllers;
 
 import com.lefarmico.springjwtwebservice.entity.QuizData;
-import com.lefarmico.springjwtwebservice.exception.ClientNotFoundException;
+import com.lefarmico.springjwtwebservice.exception.DataNotFoundException;
 import com.lefarmico.springjwtwebservice.service.QuizDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -84,7 +84,7 @@ public class QuizDataController {
             QuizData updatedQuizData = quizDataService.updateAndResetQuizDataForClient(
                     clientId, wordsInQuiz, nextQuizTime, languageId, categoryId);
             return ResponseEntity.ok(updatedQuizData);
-        } catch (ClientNotFoundException e) {
+        } catch (DataNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
