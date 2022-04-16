@@ -1,7 +1,7 @@
 package com.lefarmico.springjwtwebservice.service;
 
 import com.lefarmico.springjwtwebservice.entity.QuizData;
-import com.lefarmico.springjwtwebservice.exception.ClientNotFoundException;
+import com.lefarmico.springjwtwebservice.exception.DataNotFoundException;
 import com.lefarmico.springjwtwebservice.repository.QuizDataRepository;
 import com.lefarmico.springjwtwebservice.repository.QuizWordRepository;
 import com.sun.istack.NotNull;
@@ -37,7 +37,7 @@ public class QuizDataService {
     public QuizData updateAndResetQuizDataForClient(
             String clientId, Short wordsInQuiz, Long nextQuizTime,
             Long languageId, Long categoryId
-    ) throws ClientNotFoundException {
+    ) throws DataNotFoundException {
         Optional<QuizData> optionalQuizDataDB = quizDataRepository.findById(clientId);
         if (optionalQuizDataDB.isPresent()) {
             QuizData quizDataDB = optionalQuizDataDB.get();
@@ -65,7 +65,7 @@ public class QuizDataService {
             return updatedQuizDataDB;
 
         } else {
-            throw new ClientNotFoundException("QuizData for clientId " + clientId + " is not found");
+            throw new DataNotFoundException("QuizData for clientId " + clientId + " is not found");
         }
     }
 
@@ -78,12 +78,12 @@ public class QuizDataService {
         return deletedId > 0;
     }
 
-    public QuizData updateQuizData(QuizData quizData) throws ClientNotFoundException {
+    public QuizData updateQuizData(QuizData quizData) throws DataNotFoundException {
         Optional<QuizData> quizDataOptional = quizDataRepository.findById(quizData.getClientId());
         if (quizDataOptional.isPresent()) {
             return quizDataRepository.save(quizData);
         } else {
-            throw new ClientNotFoundException("QuizData for clientId " + quizData.getClientId() + " is not found");
+            throw new DataNotFoundException("QuizData for clientId " + quizData.getClientId() + " is not found");
         }
     }
 

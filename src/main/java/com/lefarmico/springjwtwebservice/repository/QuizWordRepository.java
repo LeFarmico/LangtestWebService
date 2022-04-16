@@ -22,6 +22,11 @@ public interface QuizWordRepository extends JpaRepository<QuizWord, Long> {
     public List<QuizWord> getQuizWordsByClientId(@Param("clientId") String clientId);
 
     @Query(nativeQuery = true,
+           value = "SELECT * FROM quiz_word WHERE client_id = :clientId AND is_answered = false"
+    )
+    public List<QuizWord> getUnansweredQuizWordsByClientId(@Param("clientId") String clientId);
+
+    @Query(nativeQuery = true,
            value = "SELECT * FROM quiz_word WHERE id = :quizWordId AND client_id = :clientId LIMIT 1"
     )
     public Optional<QuizWord> getQuizWordByQuizWordIdAndClientId(

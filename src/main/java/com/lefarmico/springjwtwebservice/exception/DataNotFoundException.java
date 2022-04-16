@@ -2,9 +2,9 @@ package com.lefarmico.springjwtwebservice.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class ClientNotFoundException extends RequestException{
+public class DataNotFoundException extends RequestException{
 
-    public ClientNotFoundException(String msg) {
+    public DataNotFoundException(String msg) {
         super(msg);
     }
 
