@@ -20,8 +20,8 @@ public class QuizWord {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "client_id")
-    private String clientId;
+    @Column(name = "chat_id")
+    private Long chatId;
 
     @Column(name = "is_answered")
     private Boolean isAnswered;

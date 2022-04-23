@@ -33,7 +33,7 @@ public class JPAQuizWordRepositoryTests {
         testWrongAnswers.add("Лиса");
         testWrongAnswers.add("Волк");
         testQuizWord = QuizWord.builder()
-                .clientId("weoifwoe")
+                .chatId(45698552L)
                 .originalWord("Dog")
                 .correctTranslation("Собака")
                 .isAnswered(false)
@@ -49,7 +49,7 @@ public class JPAQuizWordRepositoryTests {
         wrongAnswers.add("Яблоко");
         wrongAnswers.add("Груша");
         QuizWord quiz = QuizWord.builder()
-                .clientId("weoifwopefi")
+                .chatId(1919981L)
                 .originalWord("Orange")
                 .correctTranslation("Апельсин")
                 .isAnswered(true)
@@ -68,7 +68,7 @@ public class JPAQuizWordRepositoryTests {
         wrongAnswers.add("Яблоко");
         wrongAnswers.add("Груша");
         QuizWord quiz = QuizWord.builder()
-                .clientId("weoifwopefi")
+                .chatId(6951519L)
                 .originalWord("Orange")
                 .correctTranslation("Апельсин")
                 .quizId(1L)
@@ -108,7 +108,7 @@ public class JPAQuizWordRepositoryTests {
         Optional<QuizWord> optionalQuizWord = quizWordRepository.findById(testQuizWord.getId());
         if (optionalQuizWord.isPresent()) {
             QuizWord quizWordDB = optionalQuizWord.get();
-            quizWordDB.setClientId("133r4");
+            quizWordDB.setChatId(111333555L);
             quizWordDB.setOriginalWord("Pool");
             quizWordDB.setQuizId(1L);
             quizWordDB.setCorrectTranslation("Бассейн");
@@ -121,7 +121,7 @@ public class JPAQuizWordRepositoryTests {
             quizWordDB.setWrongTranslations(updatedWringAnswers);
             QuizWord updatedQuiz = quizWordRepository.save(quizWordDB);
 
-            assertThat(updatedQuiz.getClientId()).isEqualTo("133r4");
+            assertThat(updatedQuiz.getChatId()).isEqualTo(111333555L);
             assertThat(updatedQuiz.getOriginalWord()).isEqualTo("Pool");
             assertThat(updatedQuiz.getCorrectTranslation()).isEqualTo("Бассейн");
             assertThat(updatedQuiz.getIsAnswered()).isEqualTo(true);
@@ -151,7 +151,7 @@ public class JPAQuizWordRepositoryTests {
         wrongAnswers.add("Яблоко");
         wrongAnswers.add("Груша");
         QuizWord quiz = QuizWord.builder()
-                .clientId("weoifwoe")
+                .chatId(235325L)
                 .originalWord("Pineapple")
                 .correctTranslation("Ананас")
                 .quizId(1L)
@@ -162,9 +162,9 @@ public class JPAQuizWordRepositoryTests {
         quizWordRepository.save(testQuizWord);
         quizWordRepository.save(quiz);
 
-        List<QuizWord> quizWordList = quizWordRepository.getQuizWordsByClientId("weoifwoe");
+        List<QuizWord> quizWordList = quizWordRepository.getQuizWordsByChatId(235325L);
         assertThat(quizWordList.stream().allMatch(quizWord ->
-                Objects.equals(quizWord.getClientId(), "weoifwoe")
+                Objects.equals(quizWord.getChatId(), 235325L)
         )).isEqualTo(true);
     }
 
@@ -174,8 +174,8 @@ public class JPAQuizWordRepositoryTests {
 
         QuizWord quizWordDB = quizWordRepository.save(testQuizWord);
 
-        Optional<QuizWord> quizWordOptional = quizWordRepository.getQuizWordByQuizWordIdAndClientId(
-                quizWordDB.getClientId(), quizWordDB.getId()
+        Optional<QuizWord> quizWordOptional = quizWordRepository.getQuizWordByQuizWordIdAndChatId(
+                quizWordDB.getChatId(), quizWordDB.getId()
         );
 
         assertThat(quizWordOptional.isPresent()).isEqualTo(true);
@@ -187,7 +187,7 @@ public class JPAQuizWordRepositoryTests {
         wrongAnswers.add("Яблоко");
         wrongAnswers.add("Груша");
         QuizWord quiz = QuizWord.builder()
-                .clientId("weoifwoe")
+                .chatId(22651L)
                 .originalWord("Pineapple")
                 .correctTranslation("Ананас")
                 .quizId(1L)
@@ -198,8 +198,8 @@ public class JPAQuizWordRepositoryTests {
         quizWordRepository.save(testQuizWord);
         quizWordRepository.save(quiz);
 
-        Integer isDeleted = quizWordRepository.deleteQuizWordsByClientId("weoifwoe");
-        Integer isDeletedAgain = quizWordRepository.deleteQuizWordsByClientId("weoifwoe");
+        Integer isDeleted = quizWordRepository.deleteQuizWordsByChatId(22651L);
+        Integer isDeletedAgain = quizWordRepository.deleteQuizWordsByChatId(22651L);
 
         assertThat(isDeleted).isEqualTo(2);
         assertThat(isDeletedAgain).isEqualTo(0);

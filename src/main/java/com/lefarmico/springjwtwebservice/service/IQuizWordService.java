@@ -9,26 +9,23 @@ import java.util.Optional;
 
 public interface IQuizWordService {
 
-    List<QuizWord> createQuizForClient(String clientId) throws DataNotFoundException;
+    List<QuizWord> createQuizForClient(Long chatId) throws DataNotFoundException;
 
-    Boolean deleteQuizWordsByClientId(String clientId);
+    Boolean deleteQuizWordsByClientId(Long chatId);
 
-    Optional<QuizWord> getNextNotAnsweredQuizWord(String clientId) throws DataNotFoundException;
+    Optional<QuizWord> getNextNotAnsweredQuizWord(Long chatId) throws DataNotFoundException;
 
-    List<QuizWord> getQuizWordsByClientId(String clientId) throws DataNotFoundException;
+    List<QuizWord> getQuizWordsByClientId(Long chatId) throws DataNotFoundException;
 
     /**
      *
-     * @param clientId
-     * @param quizWordId
-     * @param answer
      * @return must be empty if next quiz is not scheduled, also must be next quiz time in millis if scheduled
      */
     QuizAnswerDetailsDTO setAnswerForQuizWord(
-            String clientId,
+            Long chatId,
             Long quizWordId,
             Boolean answer
     ) throws DataNotFoundException;
 
-    Boolean resetQuizWordsForClient(String clientId) throws DataNotFoundException;
+    Boolean resetQuizWordsForClient(Long chatId) throws DataNotFoundException;
 }

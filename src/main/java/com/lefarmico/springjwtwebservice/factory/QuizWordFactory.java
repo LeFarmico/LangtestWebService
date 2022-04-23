@@ -14,7 +14,7 @@ import static com.lefarmico.springjwtwebservice.utils.ListUtils.getRandomElement
 @Component
 public class QuizWordFactory {
 
-    public QuizWord createQuizWord(String clientId, Word word, List<String> wrongTranslationList) {
+    public QuizWord createQuizWord(Long chatId, Word word, List<String> wrongTranslationList) {
 
         List<String> filteredWordTranslationsList = wrongTranslationList.stream()
                 .filter(wordTranslation -> !Objects.equals(word.getWordTranslation(), wordTranslation))
@@ -27,7 +27,7 @@ public class QuizWordFactory {
                 .originalWord(word.getWordOriginal())
                 .correctTranslation(word.getWordTranslation())
                 .wrongTranslations(randomisedWordTranslations)
-                .clientId(clientId)
+                .chatId(chatId)
                 .isAnswered(false)
                 .build();
     }

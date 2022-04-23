@@ -10,12 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional
-public interface QuizDataRepository extends JpaRepository<QuizData, String> {
+public interface QuizDataRepository extends JpaRepository<QuizData, Long> {
 
     @Query(
             nativeQuery = true,
-            value = "DELETE FROM quiz_data WHERE client_id = :clientId"
+            value = "DELETE FROM quiz_data WHERE chat_id = :chatId"
     )
     @Modifying
-    public int deleteQuizDataByClientId(@Param("clientId") String clientId);
+    public int deleteQuizDataByClientId(@Param("chatId") Long chatId);
 }

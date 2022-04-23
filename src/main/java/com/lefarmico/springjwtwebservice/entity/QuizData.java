@@ -16,9 +16,10 @@ import javax.persistence.*;
 public class QuizData {
 
     @Id
-    @Column(name = "client_id", nullable = false, unique = true)
     @NonNull
-    private String clientId;
+    @Column(name = "chat_id", nullable = false, unique = true)
+    private Long chatId;
+
 
     @Column(name = "status", nullable = false)
     @Builder.Default
@@ -26,15 +27,16 @@ public class QuizData {
 
     @Column(name = "words_in_quiz", nullable = false)
     @NonNull
-    private Short wordsInQuiz;
+    private int wordsInQuiz;
 
     @Column(name = "current_word_number", nullable = false)
     @Builder.Default
-    private Short currentWordNumber = 0;
-
-    @Column(name = "next_quiz_time", nullable = false)
     @NonNull
-    private Long nextQuizTime;
+    private int currentWordNumber = 0;
+
+    @Column(name = "break_time_in_millis", nullable = false)
+    @NonNull
+    private Long breakTimeInMillis;
 
     @Column(name = "language_id", nullable = false)
     @NonNull

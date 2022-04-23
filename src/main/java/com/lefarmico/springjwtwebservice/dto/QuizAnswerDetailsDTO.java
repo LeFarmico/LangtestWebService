@@ -10,7 +10,7 @@ import lombok.*;
 public class QuizAnswerDetailsDTO {
 
     private Long wordId;
-    private Long currentWordNumber;
-    private Long summaryWordCount;
+    private int currentWordNumber;
+    private int summaryWordCount;
     private Long nextQuizTime;
 }

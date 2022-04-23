@@ -21,13 +21,13 @@ public class QuizDataService {
     QuizWordRepository quizWordRepository;
 
     public QuizData createQuizDataForClient(
-            String clientId, Short wordsInQuiz, Long nextQuizTime,
+            Long chatId, int wordsInQuiz, Long breakTimeInMillis,
             Long languageId, Long categoryId
     ) {
         QuizData quizData = QuizData.builder()
-                .clientId(clientId)
+                .chatId(chatId)
                 .wordsInQuiz(wordsInQuiz)
-                .nextQuizTime(nextQuizTime)
+                .breakTimeInMillis(breakTimeInMillis)
                 .languageId(languageId)
                 .categoryId(categoryId)
                 .build();
@@ -35,20 +35,20 @@ public class QuizDataService {
     }
 
     public QuizData updateAndResetQuizDataForClient(
-            String clientId, Short wordsInQuiz, Long nextQuizTime,
+            Long chatId, int wordsInQuiz, Long nextQuizTime,
             Long languageId, Long categoryId
     ) throws DataNotFoundException {
-        Optional<QuizData> optionalQuizDataDB = quizDataRepository.findById(clientId);
+        Optional<QuizData> optionalQuizDataDB = quizDataRepository.findById(chatId);
         if (optionalQuizDataDB.isPresent()) {
             QuizData quizDataDB = optionalQuizDataDB.get();
-            Long updatedNextQuizTime = getOrElse(nextQuizTime, quizDataDB.getNextQuizTime());
+            Long updatedNextQuizTime = getOrElse(nextQuizTime, quizDataDB.getBreakTimeInMillis());
             Long updatedLanguageId = getOrElse(languageId, quizDataDB.getLanguageId());
             Long updatedCategoryId = getOrElse(categoryId, quizDataDB.getCategoryId());
-            Short updatedWordsInQuiz = getOrElse(wordsInQuiz, quizDataDB.getWordsInQuiz());
+            int updatedWordsInQuiz = getOrElse(wordsInQuiz, quizDataDB.getWordsInQuiz());
 
             QuizData quizDataForUpdate = QuizData.builder()
-                    .clientId(quizDataDB.getClientId())
-                    .nextQuizTime(updatedNextQuizTime)
+                    .chatId(quizDataDB.getChatId())
+                    .breakTimeInMillis(updatedNextQuizTime)
                     .languageId(updatedLanguageId)
                     .categoryId(updatedCategoryId)
                     .wordsInQuiz(updatedWordsInQuiz)
@@ -60,30 +60,30 @@ public class QuizDataService {
 
             // TODO: зупустить в отдельном потоке?
             if (languageId != null || categoryId != null) {
-                quizWordRepository.deleteQuizWordsByClientId(clientId);
+                quizWordRepository.deleteQuizWordsByChatId(chatId);
             }
             return updatedQuizDataDB;
 
         } else {
-            throw new DataNotFoundException("QuizData for clientId " + clientId + " is not found");
+            throw new DataNotFoundException("QuizData for chatId " + chatId + " is not found");
         }
     }
 
-    public Optional<QuizData> getQuizDataByClientId(String clientId) {
-        return quizDataRepository.findById(clientId);
+    public Optional<QuizData> getQuizDataByClientId(Long chatId) {
+        return quizDataRepository.findById(chatId);
     }
 
-    public Boolean deleteQuizDataForClient(String clientId) {
-        int deletedId = quizDataRepository.deleteQuizDataByClientId(clientId);
+    public Boolean deleteQuizDataForClient(Long chatId) {
+        int deletedId = quizDataRepository.deleteQuizDataByClientId(chatId);
         return deletedId > 0;
     }
 
     public QuizData updateQuizData(QuizData quizData) throws DataNotFoundException {
-        Optional<QuizData> quizDataOptional = quizDataRepository.findById(quizData.getClientId());
+        Optional<QuizData> quizDataOptional = quizDataRepository.findById(quizData.getChatId());
         if (quizDataOptional.isPresent()) {
             return quizDataRepository.save(quizData);
         } else {
-            throw new DataNotFoundException("QuizData for clientId " + quizData.getClientId() + " is not found");
+            throw new DataNotFoundException("QuizData for chatId " + quizData.getChatId() + " is not found");
         }
     }
 

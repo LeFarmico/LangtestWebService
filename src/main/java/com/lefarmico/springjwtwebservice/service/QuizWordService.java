@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Component
@@ -37,11 +36,11 @@ public class QuizWordService implements IQuizWordService {
     WordRepository wordRepository;
 
     @Override
-    public List<QuizWord> createQuizForClient(String clientId) throws DataNotFoundException {
-        QuizData quizDataDB = checkForClientQuizData(clientId);
+    public List<QuizWord> createQuizForClient(Long chatId) throws DataNotFoundException {
+        QuizData quizDataDB = checkForClientQuizData(chatId);
 
         quizDataDB.setCurrentWordNumber((short) 0);
-        quizWordRepository.deleteQuizWordsByClientId(clientId);
+        quizWordRepository.deleteQuizWordsByChatId(chatId);
 
         List<Word> wordList = wordRepository.getWordsByCategoryId(quizDataDB.getCategoryId());
         List<QuizWord> quizWordList = new ArrayList<>();
@@ -50,21 +49,21 @@ public class QuizWordService implements IQuizWordService {
                     quizDataDB.getCategoryId(),
                     word.getWordTranslation()
             );
-            QuizWord quizWord = quizWordFactory.createQuizWord(clientId, word, translationsList);
+            QuizWord quizWord = quizWordFactory.createQuizWord(chatId, word, translationsList);
             quizWordList.add(quizWord);
         });
         return quizWordRepository.saveAll(quizWordList);
     }
 
     @Override
-    public Boolean deleteQuizWordsByClientId(String clientId) {
-        return quizWordRepository.deleteQuizWordsByClientId(clientId) > 0;
+    public Boolean deleteQuizWordsByClientId(Long chatId) {
+        return quizWordRepository.deleteQuizWordsByChatId(chatId) > 0;
     }
 
     @Override
-    public Optional<QuizWord> getNextNotAnsweredQuizWord(String clientId) throws DataNotFoundException {
-        checkForClientQuizData(clientId);
-        List<QuizWord> quizWordListDB = quizWordRepository.getUnansweredQuizWordsByClientId(clientId);
+    public Optional<QuizWord> getNextNotAnsweredQuizWord(Long chatId) throws DataNotFoundException {
+        checkForClientQuizData(chatId);
+        List<QuizWord> quizWordListDB = quizWordRepository.getUnansweredQuizWordsByChatId(chatId);
         if (!quizWordListDB.isEmpty()) {
 
             QuizWord randomQuizWord = ListUtils.getRandomElementFromList(quizWordListDB);
@@ -75,35 +74,35 @@ public class QuizWordService implements IQuizWordService {
     }
 
     @Override
-    public List<QuizWord> getQuizWordsByClientId(String clientId) throws DataNotFoundException {
-        checkForClientQuizData(clientId);
-        return quizWordRepository.getQuizWordsByClientId(clientId);
+    public List<QuizWord> getQuizWordsByClientId(Long chatId) throws DataNotFoundException {
+        checkForClientQuizData(chatId);
+        return quizWordRepository.getQuizWordsByChatId(chatId);
     }
 
     @Override
     public QuizAnswerDetailsDTO setAnswerForQuizWord(
-            String clientId, Long quizWordId, Boolean answer
+            Long chatId, Long quizWordId, Boolean answer
     ) throws DataNotFoundException {
-        QuizData quizDataDB = checkForClientQuizData(clientId);
-        QuizWord quizWordDB = checkForQuizWord(clientId, quizWordId);
+        QuizData quizDataDB = checkForClientQuizData(chatId);
+        QuizWord quizWordDB = checkForQuizWord(chatId, quizWordId);
 
 
         QuizAnswerDetailsDTO answerDetailsDTO = QuizAnswerDetailsDTO.builder()
                 .wordId(quizWordDB.getId())
-                .summaryWordCount(quizDataDB.getWordsInQuiz().longValue())
-                .currentWordNumber(quizDataDB.getCurrentWordNumber().longValue())
+                .summaryWordCount(quizDataDB.getWordsInQuiz())
+                .currentWordNumber(quizDataDB.getCurrentWordNumber())
                 .build();
 
         if (
                 answer &&
                 quizDataDB.getCurrentWordNumber() < quizDataDB.getWordsInQuiz() &&
                 !quizWordDB.getIsAnswered()) {
-            Short currentWordNumber = (short) (quizDataDB.getCurrentWordNumber() + (short) 1);
+            int currentWordNumber = (quizDataDB.getCurrentWordNumber() + 1);
             quizDataDB.setCurrentWordNumber(currentWordNumber);
-            answerDetailsDTO.setCurrentWordNumber(currentWordNumber.longValue());
+            answerDetailsDTO.setCurrentWordNumber(currentWordNumber);
         }
-        if (answer && quizDataDB.getCurrentWordNumber().equals(quizDataDB.getWordsInQuiz())) {
-            answerDetailsDTO.setNextQuizTime(System.currentTimeMillis() + quizDataDB.getNextQuizTime());
+        if (answer && quizDataDB.getCurrentWordNumber() == quizDataDB.getWordsInQuiz()) {
+            answerDetailsDTO.setNextQuizTime(System.currentTimeMillis() + quizDataDB.getBreakTimeInMillis());
         }
         quizWordDB.setIsAnswered(answer);
         quizWordRepository.save(quizWordDB);
@@ -111,28 +110,28 @@ public class QuizWordService implements IQuizWordService {
     }
 
     @Override
-    public Boolean resetQuizWordsForClient(String clientId) throws DataNotFoundException {
-        QuizData quizData = checkForClientQuizData(clientId);
+    public Boolean resetQuizWordsForClient(Long chatId) throws DataNotFoundException {
+        QuizData quizData = checkForClientQuizData(chatId);
         quizData.setCurrentWordNumber((short) 0);
-        Integer numberOfChangerRows = quizWordRepository.updateIsAnsweredForClientId(clientId);
+        Integer numberOfChangerRows = quizWordRepository.updateIsAnsweredForClientId(chatId);
         // TODO: Add check for existed quiz words
         return numberOfChangerRows > 0;
     }
 
-    private QuizData checkForClientQuizData(String clientId) throws DataNotFoundException {
-        Optional<QuizData> quizDataDBOptional = quizDataService.getQuizDataByClientId(clientId);
+    private QuizData checkForClientQuizData(Long chatId) throws DataNotFoundException {
+        Optional<QuizData> quizDataDBOptional = quizDataService.getQuizDataByClientId(chatId);
         if (quizDataDBOptional.isEmpty()) {
-            throw new DataNotFoundException("QuizData for clientId: " + clientId + " is not found.");
+            throw new DataNotFoundException("QuizData for chatId: " + chatId + " is not found.");
         } else {
             return quizDataDBOptional.get();
         }
     }
 
-    private QuizWord checkForQuizWord(String clientId, Long quizWordId) throws DataNotFoundException {
-        Optional<QuizWord> quizWordOptional = quizWordRepository.getQuizWordByQuizWordIdAndClientId(clientId, quizWordId);
+    private QuizWord checkForQuizWord(Long chatId, Long quizWordId) throws DataNotFoundException {
+        Optional<QuizWord> quizWordOptional = quizWordRepository.getQuizWordByQuizWordIdAndChatId(chatId, quizWordId);
         if (quizWordOptional.isEmpty()) {
             throw new DataNotFoundException(
-                    "QuizWord with id: " + quizWordId + " for clientId: " + clientId + "is not found"
+                    "QuizWord with id: " + quizWordId + " for chatId: " + chatId + "is not found"
             );
         } else {
             return quizWordOptional.get();

@@ -20,21 +20,21 @@ public class QuizDataController {
 
     @PostMapping(value = "/create", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<QuizData> addQuizDataForClient(
-            @RequestParam("client_id") String clientId,
-            @RequestParam("words_in_quiz") Short wordsInQuiz,
-            @RequestParam("next_quiz_time") Long nextQuizTime,
+            @RequestParam("chat_id") Long chatId,
+            @RequestParam("words_in_quiz") int wordsInQuiz,
+            @RequestParam("break_time_in_millis") Long breakTimeInMillis,
             @RequestParam("language_id") Long languageId,
             @RequestParam("category_id") Long categoryId
     ) {
         try {
-            if (quizDataService.getQuizDataByClientId(clientId).isPresent()) {
+            if (quizDataService.getQuizDataByClientId(chatId).isPresent()) {
                 return ResponseEntity.unprocessableEntity().build();
             }
             QuizData quizDataDB =
                     quizDataService.createQuizDataForClient(
-                            clientId,
+                            chatId,
                             wordsInQuiz,
-                            nextQuizTime,
+                            breakTimeInMillis,
                             languageId,
                             categoryId
                     );
@@ -44,10 +44,10 @@ public class QuizDataController {
         }
     }
 
-    @GetMapping(value = "/{client_id}")
-    public ResponseEntity<QuizData> getQuizDataByClientId(@PathVariable("client_id") String clientId) {
+    @GetMapping(value = "/{chat_id}")
+    public ResponseEntity<QuizData> getQuizDataByClientId(@PathVariable("chat_id") Long chatId) {
         try {
-            Optional<QuizData> optionalQuizData = quizDataService.getQuizDataByClientId(clientId);
+            Optional<QuizData> optionalQuizData = quizDataService.getQuizDataByClientId(chatId);
             if (optionalQuizData.isPresent()) {
                 return ResponseEntity.of(optionalQuizData);
             } else  {
@@ -58,10 +58,10 @@ public class QuizDataController {
         }
     }
 
-    @DeleteMapping(value = "/{client_id}/delete")
-    public ResponseEntity<Object> deleteQuizDataByClientId(@PathVariable("client_id") String clientId) {
+    @DeleteMapping(value = "/{chat_id}/delete")
+    public ResponseEntity<Object> deleteQuizDataByClientId(@PathVariable("chat_id") Long chatId) {
         try {
-            Boolean deleteState = quizDataService.deleteQuizDataForClient(clientId);
+            Boolean deleteState = quizDataService.deleteQuizDataForClient(chatId);
             if (deleteState) {
                 return ResponseEntity.ok().build();
             } else {
@@ -72,17 +72,17 @@ public class QuizDataController {
         }
     }
 
-    @PutMapping(value = "/{client_id}/update")
+    @PutMapping(value = "/{chat_id}/update")
     public ResponseEntity<QuizData> updateQuizDataByClientId(
-            @PathVariable("client_id") String clientId,
+            @PathVariable("chat_id") Long chatId,
             @RequestParam(value = "words_in_quiz", required = false) Short wordsInQuiz,
-            @RequestParam(value = "next_quiz_time", required = false) Long nextQuizTime,
+            @RequestParam(value = "break_time_in_millis", required = false) Long nextQuizTime,
             @RequestParam(value = "language_id", required = false) Long languageId,
             @RequestParam(value = "category_id", required = false) Long categoryId
     ) {
         try {
             QuizData updatedQuizData = quizDataService.updateAndResetQuizDataForClient(
-                    clientId, wordsInQuiz, nextQuizTime, languageId, categoryId);
+                    chatId, wordsInQuiz, nextQuizTime, languageId, categoryId);
             return ResponseEntity.ok(updatedQuizData);
         } catch (DataNotFoundException e) {
             return ResponseEntity.notFound().build();

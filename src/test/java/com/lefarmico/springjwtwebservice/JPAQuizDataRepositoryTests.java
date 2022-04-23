@@ -28,9 +28,9 @@ public class JPAQuizDataRepositoryTests {
     @BeforeEach
     void setUp() {
         testQuizData = QuizData.builder()
-                .clientId("ewiufweiuf")
+                .chatId(1651651L)
                 .currentWordNumber((short) 1)
-                .nextQuizTime(456L)
+                .breakTimeInMillis(456L)
                 .wordsInQuiz((short) 5)
                 .categoryId(1L)
                 .languageId(1L)
@@ -42,9 +42,9 @@ public class JPAQuizDataRepositoryTests {
     @Test
     void givenQuizObject_whenSave_thenReturn_Quiz() {
         QuizData quizData = QuizData.builder()
-                .clientId("wejfnwepwefoifn")
+                .chatId(49498498L)
                 .currentWordNumber((short) 1)
-                .nextQuizTime(456L)
+                .breakTimeInMillis(456L)
                 .wordsInQuiz((short) 5)
                 .categoryId(1L)
                 .languageId(1L)
@@ -53,7 +53,7 @@ public class JPAQuizDataRepositoryTests {
 
         QuizData savedQuizData = quizDataRepository.save(quizData);
         assertThat(savedQuizData).isNotNull();
-        assertThat(savedQuizData.getClientId()).isEqualTo("wejfnwepwefoifn");
+        assertThat(savedQuizData.getChatId()).isEqualTo(49498498L);
     }
 
     @DisplayName("JUnit test for get all quiz operation")
@@ -61,9 +61,9 @@ public class JPAQuizDataRepositoryTests {
     void givenQuizList_whenFindAll_thenQuizList() {
         int countOfInsertedEntities = 0;
         QuizData quizData = QuizData.builder()
-                .clientId("wejfnwepoifn")
+                .chatId(9519819L)
                 .currentWordNumber((short) 1)
-                .nextQuizTime(456L)
+                .breakTimeInMillis(456L)
                 .wordsInQuiz((short) 5)
                 .categoryId(1L)
                 .languageId(1L)
@@ -75,7 +75,7 @@ public class JPAQuizDataRepositoryTests {
         quizDataRepository.save(quizData);
         countOfInsertedEntities++;
 
-        if (quizDataRepository.findById(testQuizData.getClientId()).isPresent()) {
+        if (quizDataRepository.findById(testQuizData.getChatId()).isPresent()) {
             quizDataRepository.save(testQuizData);
             countOfInsertedEntities++;
         }
@@ -90,13 +90,13 @@ public class JPAQuizDataRepositoryTests {
     @Test
     void givenQuizObject_whenFindById_thenReturnQuizObject() {
 
-        Optional<QuizData> optionalQuiz = quizDataRepository.findById(testQuizData.getClientId());
+        Optional<QuizData> optionalQuiz = quizDataRepository.findById(testQuizData.getChatId());
         if (optionalQuiz.isPresent()) {
             QuizData quizDataDB = optionalQuiz.get();
             assertThat(quizDataDB).isNotNull();
         } else {
             quizDataRepository.save(testQuizData);
-            Optional<QuizData> savedQuiz = quizDataRepository.findById(testQuizData.getClientId());
+            Optional<QuizData> savedQuiz = quizDataRepository.findById(testQuizData.getChatId());
             assertThat(savedQuiz.isPresent()).isEqualTo(true);
         }
 
@@ -107,25 +107,25 @@ public class JPAQuizDataRepositoryTests {
     void givenQuizObject_whenUpdateQuiz_thenReturnUpdatedQuiz() {
 
         quizDataRepository.save(testQuizData);
-        Optional<QuizData> optionalQuiz = quizDataRepository.findById(testQuizData.getClientId());
+        Optional<QuizData> optionalQuiz = quizDataRepository.findById(testQuizData.getChatId());
         if (optionalQuiz.isPresent()) {
             QuizData quizDataDB = optionalQuiz.get();
-            quizDataDB.setClientId("133r4");
+            quizDataDB.setChatId(111444555L);
             quizDataDB.setStatus("stopped");
             quizDataDB.setCurrentWordNumber((short) 10L);
             quizDataDB.setCategoryId(25L);
             quizDataDB.setLanguageId(25L);
-            quizDataDB.setNextQuizTime(4862L);
+            quizDataDB.setBreakTimeInMillis(4862L);
             quizDataDB.setWordsInQuiz((short) 20);
 
             QuizData updatedQuizData = quizDataRepository.save(quizDataDB);
 
-            assertThat(updatedQuizData.getClientId()).isEqualTo("133r4");
+            assertThat(updatedQuizData.getChatId()).isEqualTo(111444555L);
             assertThat(updatedQuizData.getStatus()).isEqualTo("stopped");
             assertThat(updatedQuizData.getCurrentWordNumber()).isEqualTo((short) 10);
             assertThat(updatedQuizData.getCategoryId()).isEqualTo(25L);
             assertThat(updatedQuizData.getLanguageId()).isEqualTo(25L);
-            assertThat(updatedQuizData.getNextQuizTime()).isEqualTo(4862L);
+            assertThat(updatedQuizData.getBreakTimeInMillis()).isEqualTo(4862L);
             assertThat(updatedQuizData.getWordsInQuiz()).isEqualTo((short) 20);
         } else {
             fail("Quiz not found.");
@@ -137,12 +137,12 @@ public class JPAQuizDataRepositoryTests {
     @Test
     void givenQuizObject_whenDelete_thenRemoveQuiz() {
 
-        if (quizDataRepository.findById(testQuizData.getClientId()).isPresent()) {
+        if (quizDataRepository.findById(testQuizData.getChatId()).isPresent()) {
             quizDataRepository.save(testQuizData);
         }
 
-        quizDataRepository.deleteQuizDataByClientId(testQuizData.getClientId());
-        Optional<QuizData> quizOptional = quizDataRepository.findById(testQuizData.getClientId());
+        quizDataRepository.deleteQuizDataByClientId(testQuizData.getChatId());
+        Optional<QuizData> quizOptional = quizDataRepository.findById(testQuizData.getChatId());
 
         assertThat(quizOptional).isEmpty();
     }

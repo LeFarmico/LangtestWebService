@@ -27,12 +27,12 @@ public class QuizWordController {
     @Autowired
     QuizWordService quizWordService;
 
-    @PostMapping(value = "/{client_id}/createQuizWords", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<QuizWord>> createQuizForClient(
-            @PathVariable("client_id") String clientId
+    @PostMapping(value = "/{chat_id}/createQuizWords", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<QuizWord>> createQuizForChat(
+            @PathVariable("chat_id") Long chatId
     ) {
         try {
-            List<QuizWord> quizWordList = quizWordService.createQuizForClient(clientId);
+            List<QuizWord> quizWordList = quizWordService.createQuizForClient(chatId);
             if (!quizWordList.isEmpty()) {
                 return ResponseEntity.of(Optional.of(quizWordList));
             } else {
@@ -47,9 +47,9 @@ public class QuizWordController {
         }
     }
 
-    @PutMapping(value = "/{client_id}/quiz_word/{quiz_word_id}")
+    @PutMapping(value = "/{chat_id}/quiz_word/{quiz_word_id}")
     public ResponseEntity<Map<String, Object>> setAnswerForQuizWord(
-            @PathVariable("client_id") String clientId,
+            @PathVariable("chat_id") Long chatId,
             @PathVariable("quiz_word_id") Long quizWordId,
             @RequestParam("answer") Boolean answer
     ) {
@@ -57,7 +57,7 @@ public class QuizWordController {
         ResponseEntity<Map<String, Object>> response;
         try {
             QuizAnswerDetailsDTO answerDetailsDTO =
-                    quizWordService.setAnswerForQuizWord(clientId, quizWordId, answer);
+                    quizWordService.setAnswerForQuizWord(chatId, quizWordId, answer);
 
             responseMap.put("quiz_word_id", answerDetailsDTO.getWordId());
             responseMap.put("current_word_number", answerDetailsDTO.getCurrentWordNumber());
@@ -78,12 +78,12 @@ public class QuizWordController {
         return response;
     }
     
-    @PutMapping(value = "/{client_id}/resetQuiz")
+    @PutMapping(value = "/{chat_id}/resetQuiz")
     public ResponseEntity<Boolean> resetQuizWords(
-            @PathVariable("client_id") String clientId
+            @PathVariable("chat_id") Long chatId
     ) {
         try {
-            Boolean isReseted = quizWordService.resetQuizWordsForClient(clientId);
+            Boolean isReseted = quizWordService.resetQuizWordsForClient(chatId);
             if (isReseted) {
                 return ResponseEntity.ok().build();
             } else {
@@ -96,12 +96,12 @@ public class QuizWordController {
         }
     }
 
-    @GetMapping(value = "/{client_id}/quiz_word/next")
+    @GetMapping(value = "/{chat_id}/quiz_word/next")
     public ResponseEntity<QuizWord> getNextQuizWord(
-            @PathVariable("client_id") String clientId
+            @PathVariable("chat_id") Long chatId
     ) {
         try {
-            Optional<QuizWord> quizWordOptional = quizWordService.getNextNotAnsweredQuizWord(clientId);
+            Optional<QuizWord> quizWordOptional = quizWordService.getNextNotAnsweredQuizWord(chatId);
             return quizWordOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
         } catch (DataNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -110,12 +110,12 @@ public class QuizWordController {
         }
     }
 
-    @GetMapping(value = "/{client_id}/quiz_word")
+    @GetMapping(value = "/{chat_id}/quiz_word")
     public ResponseEntity<List<QuizWord>> getQuizWords(
-            @PathVariable("client_id") String clientId
+            @PathVariable("chat_id") Long chatId
     ) {
         try {
-            List<QuizWord> quizWordListDB = quizWordService.getQuizWordsByClientId(clientId);
+            List<QuizWord> quizWordListDB = quizWordService.getQuizWordsByClientId(chatId);
             if (!quizWordListDB.isEmpty()) {
                 return ResponseEntity.ok(quizWordListDB);
             } else {
@@ -126,12 +126,12 @@ public class QuizWordController {
         }
     }
 
-    @DeleteMapping(value = "/{client_id}/quiz_word/delete")
+    @DeleteMapping(value = "/{chat_id}/quiz_word/delete")
     public ResponseEntity<Object> deleteQuizWord(
-            @PathVariable("client_id") String clientId
+            @PathVariable("chat_id") Long chatId
     ) {
         try {
-            Boolean isDeleted = quizWordService.deleteQuizWordsByClientId(clientId);
+            Boolean isDeleted = quizWordService.deleteQuizWordsByClientId(chatId);
             if (isDeleted) {
                 return ResponseEntity.ok().build();
             } else {
