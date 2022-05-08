@@ -27,9 +27,6 @@ public class QuizDataController {
             @RequestParam("category_id") Long categoryId
     ) {
         try {
-            if (quizDataService.getQuizDataByClientId(chatId).isPresent()) {
-                return ResponseEntity.unprocessableEntity().build();
-            }
             QuizData quizDataDB =
                     quizDataService.createQuizDataForClient(
                             chatId,
@@ -58,12 +55,13 @@ public class QuizDataController {
         }
     }
 
+    // +
     @DeleteMapping(value = "/{chat_id}/delete")
-    public ResponseEntity<Object> deleteQuizDataByClientId(@PathVariable("chat_id") Long chatId) {
+    public ResponseEntity<String> deleteQuizDataByClientId(@PathVariable("chat_id") Long chatId) {
         try {
             Boolean deleteState = quizDataService.deleteQuizDataForClient(chatId);
             if (deleteState) {
-                return ResponseEntity.ok().build();
+                return ResponseEntity.ok("true");
             } else {
                 return ResponseEntity.notFound().build();
             }

@@ -1,11 +1,11 @@
 package com.lefarmico.springjwtwebservice.service;
 
 import com.lefarmico.springjwtwebservice.dto.QuizAnswerDetailsDTO;
-import com.lefarmico.springjwtwebservice.entity.QuizData;
-import com.lefarmico.springjwtwebservice.entity.Word;
+import com.lefarmico.springjwtwebservice.entity.*;
 import com.lefarmico.springjwtwebservice.exception.DataNotFoundException;
 import com.lefarmico.springjwtwebservice.factory.QuizWordFactory;
-import com.lefarmico.springjwtwebservice.entity.QuizWord;
+import com.lefarmico.springjwtwebservice.repository.CategoryRepository;
+import com.lefarmico.springjwtwebservice.repository.LanguageRepository;
 import com.lefarmico.springjwtwebservice.repository.QuizWordRepository;
 import com.lefarmico.springjwtwebservice.repository.WordRepository;
 import com.lefarmico.springjwtwebservice.utils.ListUtils;
@@ -34,6 +34,12 @@ public class QuizWordService implements IQuizWordService {
 
     @Autowired
     WordRepository wordRepository;
+
+    @Autowired
+    LanguageRepository languageRepository;
+
+    @Autowired
+    CategoryRepository categoryRepository;
 
     @Override
     public List<QuizWord> createQuizForClient(Long chatId) throws DataNotFoundException {
@@ -94,9 +100,9 @@ public class QuizWordService implements IQuizWordService {
                 .build();
 
         if (
-                answer &&
-                quizDataDB.getCurrentWordNumber() < quizDataDB.getWordsInQuiz() &&
-                !quizWordDB.getIsAnswered()) {
+            answer &&
+            quizDataDB.getCurrentWordNumber() < quizDataDB.getWordsInQuiz() &&
+            !quizWordDB.getIsAnswered()) {
             int currentWordNumber = (quizDataDB.getCurrentWordNumber() + 1);
             quizDataDB.setCurrentWordNumber(currentWordNumber);
             answerDetailsDTO.setCurrentWordNumber(currentWordNumber);

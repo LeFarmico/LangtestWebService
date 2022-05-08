@@ -1,6 +1,7 @@
 package com.lefarmico.springjwtwebservice.controllers;
 
 import com.lefarmico.springjwtwebservice.dto.QuizAnswerDetailsDTO;
+import com.lefarmico.springjwtwebservice.entity.QuizStats;
 import com.lefarmico.springjwtwebservice.entity.QuizWord;
 import com.lefarmico.springjwtwebservice.exception.DataNotFoundException;
 import com.lefarmico.springjwtwebservice.service.QuizWordService;
@@ -79,13 +80,13 @@ public class QuizWordController {
     }
     
     @PutMapping(value = "/{chat_id}/resetQuiz")
-    public ResponseEntity<Boolean> resetQuizWords(
+    public ResponseEntity<String> resetQuizWords(
             @PathVariable("chat_id") Long chatId
     ) {
         try {
             Boolean isReseted = quizWordService.resetQuizWordsForClient(chatId);
             if (isReseted) {
-                return ResponseEntity.ok().build();
+                return ResponseEntity.ok("true");
             } else {
                 return ResponseEntity.noContent().build();
             }

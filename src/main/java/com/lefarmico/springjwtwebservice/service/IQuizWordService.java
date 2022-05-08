@@ -1,6 +1,7 @@
 package com.lefarmico.springjwtwebservice.service;
 
 import com.lefarmico.springjwtwebservice.dto.QuizAnswerDetailsDTO;
+import com.lefarmico.springjwtwebservice.entity.QuizStats;
 import com.lefarmico.springjwtwebservice.entity.QuizWord;
 import com.lefarmico.springjwtwebservice.exception.DataNotFoundException;
 

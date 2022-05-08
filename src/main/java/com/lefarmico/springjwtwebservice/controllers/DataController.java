@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/data")
@@ -39,7 +40,7 @@ public class DataController {
     }
 
     @GetMapping("/language/{language_id}/category")
-    public ResponseEntity<List<Category>> getCategoryByLanguageId(@PathVariable("language_id") Long languageId) {
+    public ResponseEntity<List<Category>> getCategoryListByLanguageId(@PathVariable("language_id") Long languageId) {
         try {
             List<Category> categoryListDB = categoryRepository.findByLanguageId(languageId);
             if (!categoryListDB.isEmpty()) {
@@ -49,6 +50,20 @@ public class DataController {
             }
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/language/{language_id}")
+    public ResponseEntity<Language> getLanguageById(@PathVariable("language_id") Long languageId) {
+        try {
+            Optional<Language> optionalLanguageDB = languageRepository.findById(languageId);
+            if (optionalLanguageDB.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            } else {
+                return ResponseEntity.ok(optionalLanguageDB.get());
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 
@@ -62,7 +77,21 @@ public class DataController {
                 return ResponseEntity.noContent().build();
             }
         } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/language/category/{category_id}")
+    public ResponseEntity<Category> getCategoryById(@PathVariable("category_id") Long categoryId) {
+        try {
+            Optional<Category> optionalCategoryDB = categoryRepository.findById(categoryId);
+            if (optionalCategoryDB.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            } else {
+                return ResponseEntity.ok(optionalCategoryDB.get());
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 }
