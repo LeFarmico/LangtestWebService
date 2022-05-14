@@ -29,4 +29,6 @@ public interface IQuizWordService {
     ) throws DataNotFoundException;
 
     Boolean resetQuizWordsForClient(Long chatId) throws DataNotFoundException;
+
+    Boolean resetQuizWordNumberForClient(Long chatId) throws DataNotFoundException;
 }

@@ -124,6 +124,14 @@ public class QuizWordService implements IQuizWordService {
         return numberOfChangerRows > 0;
     }
 
+    @Override
+    public Boolean resetQuizWordNumberForClient(Long chatId) throws DataNotFoundException {
+        QuizData quizData = checkForClientQuizData(chatId);
+        quizData.setCurrentWordNumber((short) 0);
+        QuizData updatedData = quizDataService.updateQuizData(quizData);
+        return updatedData != null;
+    }
+
     private QuizData checkForClientQuizData(Long chatId) throws DataNotFoundException {
         Optional<QuizData> quizDataDBOptional = quizDataService.getQuizDataByClientId(chatId);
         if (quizDataDBOptional.isEmpty()) {

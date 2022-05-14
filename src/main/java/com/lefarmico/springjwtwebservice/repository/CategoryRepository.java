@@ -1,6 +1,7 @@
 package com.lefarmico.springjwtwebservice.repository;
 
 import com.lefarmico.springjwtwebservice.entity.Category;
+import com.lefarmico.springjwtwebservice.entity.FileCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

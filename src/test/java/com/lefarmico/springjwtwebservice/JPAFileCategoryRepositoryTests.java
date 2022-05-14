@@ -1,6 +1,7 @@
 package com.lefarmico.springjwtwebservice;
 
 import com.lefarmico.springjwtwebservice.entity.Category;
+import com.lefarmico.springjwtwebservice.entity.FileCategory;
 import com.lefarmico.springjwtwebservice.repository.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +19,7 @@ import static org.assertj.core.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class JPACategoryRepositoryTests {
+public class JPAFileCategoryRepositoryTests {
 
     @Autowired
     CategoryRepository categoryRepository;
