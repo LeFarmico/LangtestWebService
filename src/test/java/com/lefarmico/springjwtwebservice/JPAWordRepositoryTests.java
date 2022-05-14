@@ -1,5 +1,6 @@
 package com.lefarmico.springjwtwebservice;
 
+import com.lefarmico.springjwtwebservice.entity.FileWord;
 import com.lefarmico.springjwtwebservice.entity.Word;
 import com.lefarmico.springjwtwebservice.repository.WordRepository;
 import org.junit.jupiter.api.BeforeEach;

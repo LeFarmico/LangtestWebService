@@ -97,6 +97,24 @@ public class QuizWordController {
         }
     }
 
+    @PutMapping(value = "/{chat_id}/resetQuizWordNumber")
+    public ResponseEntity<String> resetQuizWordNumber(
+            @PathVariable("chat_id") Long chatId
+    ) {
+        try {
+            Boolean isReset = quizWordService.resetQuizWordNumberForClient(chatId);
+            if (isReset) {
+                return ResponseEntity.ok("true");
+            } else {
+                return ResponseEntity.noContent().build();
+            }
+        } catch (DataNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @GetMapping(value = "/{chat_id}/quiz_word/next")
     public ResponseEntity<QuizWord> getNextQuizWord(
             @PathVariable("chat_id") Long chatId

@@ -1,6 +1,7 @@
 package com.lefarmico.springjwtwebservice.factory;
 
 import com.lefarmico.springjwtwebservice.entity.QuizWord;
+import com.lefarmico.springjwtwebservice.entity.FileWord;
 import com.lefarmico.springjwtwebservice.entity.Word;
 import org.springframework.stereotype.Component;
 

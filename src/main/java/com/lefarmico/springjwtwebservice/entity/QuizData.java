@@ -26,12 +26,10 @@ public class QuizData {
     private String status = "DEFAULT";
 
     @Column(name = "words_in_quiz", nullable = false)
-    @NonNull
     private int wordsInQuiz;
 
     @Column(name = "current_word_number", nullable = false)
     @Builder.Default
-    @NonNull
     private int currentWordNumber = 0;
 
     @Column(name = "break_time_in_millis", nullable = false)
