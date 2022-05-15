@@ -86,8 +86,8 @@ public class QuizWordService implements IQuizWordService {
     }
 
     @Override
-    public QuizAnswerDetailsDTO setAnswerForQuizWord(
-            Long chatId, Long quizWordId, Boolean answer
+    public QuizAnswerDetailsDTO setCorrectAnswerForQuizWord(
+            Long chatId, Long quizWordId
     ) throws DataNotFoundException {
         QuizData quizDataDB = checkForClientQuizData(chatId);
         QuizWord quizWordDB = checkForQuizWord(chatId, quizWordId);
@@ -97,20 +97,20 @@ public class QuizWordService implements IQuizWordService {
                 .wordId(quizWordDB.getId())
                 .summaryWordCount(quizDataDB.getWordsInQuiz())
                 .currentWordNumber(quizDataDB.getCurrentWordNumber())
+                .originalWord(quizWordDB.getOriginalWord())
+                .translation(quizWordDB.getCorrectTranslation())
                 .build();
 
-        if (
-            answer &&
-            quizDataDB.getCurrentWordNumber() < quizDataDB.getWordsInQuiz() &&
-            !quizWordDB.getIsAnswered()) {
+        if (quizDataDB.getCurrentWordNumber() < quizDataDB.getWordsInQuiz() && !quizWordDB.getIsAnswered()) {
             int currentWordNumber = (quizDataDB.getCurrentWordNumber() + 1);
             quizDataDB.setCurrentWordNumber(currentWordNumber);
             answerDetailsDTO.setCurrentWordNumber(currentWordNumber);
         }
-        if (answer && quizDataDB.getCurrentWordNumber() == quizDataDB.getWordsInQuiz()) {
+        if (quizDataDB.getCurrentWordNumber() == quizDataDB.getWordsInQuiz()) {
             answerDetailsDTO.setNextQuizTime(System.currentTimeMillis() + quizDataDB.getBreakTimeInMillis());
         }
-        quizWordDB.setIsAnswered(answer);
+
+        quizWordDB.setIsAnswered(true);
         quizWordRepository.save(quizWordDB);
         return answerDetailsDTO;
     }
@@ -130,6 +130,16 @@ public class QuizWordService implements IQuizWordService {
         quizData.setCurrentWordNumber((short) 0);
         QuizData updatedData = quizDataService.updateQuizData(quizData);
         return updatedData != null;
+    }
+
+    @Override
+    public QuizWord setIncorrectAnswerForQuizWord(Long chatId, Long quizWordId) throws DataNotFoundException {
+        QuizData quizDataDB = checkForClientQuizData(chatId);
+        QuizWord quizWordDB = checkForQuizWord(chatId, quizWordId);
+
+        quizWordDB.setIsAnswered(true);
+        quizWordRepository.save(quizWordDB);
+        return quizWordDB;
     }
 
     private QuizData checkForClientQuizData(Long chatId) throws DataNotFoundException {

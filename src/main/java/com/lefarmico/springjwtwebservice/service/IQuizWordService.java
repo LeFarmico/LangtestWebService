@@ -1,7 +1,6 @@
 package com.lefarmico.springjwtwebservice.service;
 
 import com.lefarmico.springjwtwebservice.dto.QuizAnswerDetailsDTO;
-import com.lefarmico.springjwtwebservice.entity.QuizStats;
 import com.lefarmico.springjwtwebservice.entity.QuizWord;
 import com.lefarmico.springjwtwebservice.exception.DataNotFoundException;
 
@@ -22,13 +21,14 @@ public interface IQuizWordService {
      *
      * @return must be empty if next quiz is not scheduled, also must be next quiz time in millis if scheduled
      */
-    QuizAnswerDetailsDTO setAnswerForQuizWord(
+    QuizAnswerDetailsDTO setCorrectAnswerForQuizWord(
             Long chatId,
-            Long quizWordId,
-            Boolean answer
+            Long quizWordId
     ) throws DataNotFoundException;
 
     Boolean resetQuizWordsForClient(Long chatId) throws DataNotFoundException;
 
     Boolean resetQuizWordNumberForClient(Long chatId) throws DataNotFoundException;
+
+    QuizWord setIncorrectAnswerForQuizWord(Long chatId, Long quizWordId) throws DataNotFoundException;
 }

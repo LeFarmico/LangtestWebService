@@ -13,4 +13,6 @@ public class QuizAnswerDetailsDTO {
     private int currentWordNumber;
     private int summaryWordCount;
     private Long nextQuizTime;
+    private String originalWord;
+    private String translation;
 }
