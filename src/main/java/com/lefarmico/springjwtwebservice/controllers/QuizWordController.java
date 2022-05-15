@@ -1,7 +1,7 @@
 package com.lefarmico.springjwtwebservice.controllers;
 
 import com.lefarmico.springjwtwebservice.dto.QuizAnswerDetailsDTO;
-import com.lefarmico.springjwtwebservice.entity.QuizStats;
+import com.lefarmico.springjwtwebservice.entity.QuizData;
 import com.lefarmico.springjwtwebservice.entity.QuizWord;
 import com.lefarmico.springjwtwebservice.exception.DataNotFoundException;
 import com.lefarmico.springjwtwebservice.service.QuizWordService;
@@ -48,21 +48,23 @@ public class QuizWordController {
         }
     }
 
-    @PutMapping(value = "/{chat_id}/quiz_word/{quiz_word_id}")
-    public ResponseEntity<Map<String, Object>> setAnswerForQuizWord(
+    @PutMapping(value = "/{chat_id}/quiz_word/{quiz_word_id}/correct")
+    public ResponseEntity<Map<String, Object>> setCorrectAnswerForQuizWord(
             @PathVariable("chat_id") Long chatId,
-            @PathVariable("quiz_word_id") Long quizWordId,
-            @RequestParam("answer") Boolean answer
+            @PathVariable("quiz_word_id") Long quizWordId
     ) {
         Map<String, Object> responseMap = new HashMap<>();
         ResponseEntity<Map<String, Object>> response;
         try {
             QuizAnswerDetailsDTO answerDetailsDTO =
-                    quizWordService.setAnswerForQuizWord(chatId, quizWordId, answer);
+                    quizWordService.setCorrectAnswerForQuizWord(chatId, quizWordId);
+
 
             responseMap.put("quiz_word_id", answerDetailsDTO.getWordId());
             responseMap.put("current_word_number", answerDetailsDTO.getCurrentWordNumber());
             responseMap.put("summary_word_count", answerDetailsDTO.getSummaryWordCount());
+            responseMap.put("original_word", answerDetailsDTO.getOriginalWord());
+            responseMap.put("translation", answerDetailsDTO.getTranslation());
             if (answerDetailsDTO.getNextQuizTime() != null) {
                 responseMap.put("next_quiz_time", answerDetailsDTO.getNextQuizTime());
             }
@@ -77,6 +79,22 @@ public class QuizWordController {
             response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseMap);
         }
         return response;
+    }
+
+    @PutMapping(value = "/{chat_id}/quiz_word/{quiz_word_id}/incorrect")
+    public ResponseEntity<QuizWord> setIncorrectAnswer(
+            @PathVariable("chat_id") Long chatId,
+            @PathVariable("quiz_word_id") Long quizWordId
+    ) {
+        try {
+            QuizWord quizWord = quizWordService.setIncorrectAnswerForQuizWord(chatId, quizWordId);
+            return ResponseEntity.ok(quizWord);
+
+        } catch (DataNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
     
     @PutMapping(value = "/{chat_id}/resetQuiz")
