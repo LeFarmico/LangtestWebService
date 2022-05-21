@@ -1,0 +1,53 @@
+version: "1"
+services:
+  mysql:
+    container_name: mysql
+    image: lefarmico/langtest-mysql
+    env_file: ./.env
+    environment:
+      MYSQL_DATABASE: $MYSQLDB_DATABASE
+      MYSQL_USER: $MYSQLDB_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
+    healthcheck:
+      test: mysql $MYSQLDB_DATABASE --user=$MYSQLDB_USER --password='$MYSQL_PASSWORD' --silent --execute "SELECT 1;"
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    ports:
+      - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
+    expose:
+      - $MYSQLDB_LOCAL_PORT
+  api:
+    container_name: api
+    image: lefarmico/langtest-api-service
+    env_file: ./.env
+    restart: on-failure
+    healthcheck:
+      test: curl --fail --silent localhost:$SPRING_DOCKER_PORT/actuator/health | grep UP || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:$MYSQLDB_DOCKER_PORT/$MYSQLDB_DATABASE?
+      - SPRING_DATASOURCE_USERNAME=$MYSQLDB_USER
+      - SPRING_DATASOURCE_PASSWORD=$MYSQL_PASSWORD
+      - SERVER_PORT=$SPRING_LOCAL_PORT
+    ports:
+      - $SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT
+    expose:
+      - $SPRING_LOCAL_PORT
+  bot:
+    container_name: bot
+    image: lefarmico/langtest-telegram-bot
+    env_file: ./.env
+    restart: on-failure
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      - BACKEND_HOST=$SPRING_DOCKER_HOST
+      - BACKEND_PORT=$SPRING_LOCAL_PORT

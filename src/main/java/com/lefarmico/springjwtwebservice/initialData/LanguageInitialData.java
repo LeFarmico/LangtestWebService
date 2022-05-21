@@ -7,12 +7,13 @@ import com.lefarmico.springjwtwebservice.repository.WordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.lefarmico.springjwtwebservice.entity.JsonDictionaryEntityKt.getDictionaryFromJson;
+import static com.lefarmico.springjwtwebservice.entity.JsonDictionaryEntityKt.getDictionaryFromResource;
 
 @Component
 public class LanguageInitialData {
@@ -28,15 +29,12 @@ public class LanguageInitialData {
 
     @EventListener
     public void appReady(ApplicationReadyEvent event) {
-        Dictionary dictionarySpanish = getDictionaryFromJson(
-                "C:\\Users\\Flyin\\IdeaProjects\\" +
-                        "spring-jwt-web-service\\src\\main\\resources\\" +
-                        "spanish_dictionary.json"
+        Dictionary dictionarySpanish = getDictionaryFromResource(
+                new ClassPathResource("/spanish_dictionary.json")
         );
-        Dictionary dictionaryEnglish = getDictionaryFromJson(
-                "C:\\Users\\Flyin\\IdeaProjects\\" +
-                        "spring-jwt-web-service\\src\\main\\resources\\" +
-                        "english_dictionary.json"
+        Dictionary dictionaryEnglish = getDictionaryFromResource(
+                new ClassPathResource("/english_dictionary.json")
+
         );
 
         saveDictionary(dictionarySpanish);
