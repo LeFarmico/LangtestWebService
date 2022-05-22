@@ -2,7 +2,6 @@ package com.lefarmico.springjwtwebservice.controllers;
 
 import com.lefarmico.springjwtwebservice.entity.Category;
 import com.lefarmico.springjwtwebservice.entity.Language;
-import com.lefarmico.springjwtwebservice.entity.FileWord;
 import com.lefarmico.springjwtwebservice.entity.Word;
 import com.lefarmico.springjwtwebservice.repository.CategoryRepository;
 import com.lefarmico.springjwtwebservice.repository.LanguageRepository;

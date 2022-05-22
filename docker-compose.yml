@@ -1,7 +1,7 @@
 version: "1"
 services:
-  mysql:
-    container_name: mysql
+  database:
+    container_name: database
     image: lefarmico/langtest-mysql
     env_file: ./.env
     environment:
@@ -24,15 +24,15 @@ services:
     env_file: ./.env
     restart: on-failure
     healthcheck:
-      test: curl --fail --silent localhost:$SPRING_DOCKER_PORT/actuator/health | grep UP || exit 1
+      test: curl --fail --silent --request GET http://localhost:$SPRING_LOCAL_PORT/actuator/health || exit 1
       interval: 10s
       timeout: 10s
       retries: 5
     depends_on:
-      mysql:
+      database:
         condition: service_healthy
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:$MYSQLDB_DOCKER_PORT/$MYSQLDB_DATABASE?
+      - SPRING_DATASOURCE_URL=jdbc:mysql://database:$MYSQLDB_DOCKER_PORT/$MYSQLDB_DATABASE?
       - SPRING_DATASOURCE_USERNAME=$MYSQLDB_USER
       - SPRING_DATASOURCE_PASSWORD=$MYSQL_PASSWORD
       - SERVER_PORT=$SPRING_LOCAL_PORT
