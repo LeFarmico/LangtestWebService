@@ -1,6 +1,5 @@
 package com.lefarmico.springjwtwebservice.repository;
 
-import com.lefarmico.springjwtwebservice.entity.FileWord;
 import com.lefarmico.springjwtwebservice.entity.Word;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
