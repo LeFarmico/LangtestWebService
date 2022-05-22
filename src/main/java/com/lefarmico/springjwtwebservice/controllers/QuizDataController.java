@@ -73,7 +73,7 @@ public class QuizDataController {
     @PutMapping(value = "/{chat_id}/update")
     public ResponseEntity<QuizData> updateQuizDataByClientId(
             @PathVariable("chat_id") Long chatId,
-            @RequestParam(value = "words_in_quiz", required = false) Short wordsInQuiz,
+            @RequestParam(value = "words_in_quiz", required = false) Integer wordsInQuiz,
             @RequestParam(value = "break_time_in_millis", required = false) Long nextQuizTime,
             @RequestParam(value = "language_id", required = false) Long languageId,
             @RequestParam(value = "category_id", required = false) Long categoryId

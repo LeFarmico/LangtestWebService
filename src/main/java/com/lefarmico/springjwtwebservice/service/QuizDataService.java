@@ -35,7 +35,7 @@ public class QuizDataService {
     }
 
     public QuizData updateAndResetQuizDataForClient(
-            Long chatId, int wordsInQuiz, Long nextQuizTime,
+            Long chatId, Integer wordsInQuiz, Long nextQuizTime,
             Long languageId, Long categoryId
     ) throws DataNotFoundException {
         Optional<QuizData> optionalQuizDataDB = quizDataRepository.findById(chatId);
